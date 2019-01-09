@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  -->
+<xs:schema xmlns="urn:edu:berkeley:path:cc:schema:pathExtension"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:edu:berkeley:path:cc:schema:pathExtension"
+    elementFormDefault="unqualified" attributeFormDefault="unqualified" version="v1.1.3">
+
+
+
+    <!-- -->
+    <!-- Ab3418eControllerExt Data Frame
+        ============================================
+        This extended data frame holds details about the status of controllers designed to the AB3418 standard.
+
+		For the presence elements:
+		- Presence bits set true for positive presence
+		- presence1 is for detectors 1-8
+		- presence2 is for detectors 9-16
+		- presence3 is for detectors 17-24
+		- presence4 is for detectors 25-28 (bits 4-7 unused)
+		
+    	Used in data frame IntersectionSignalStatus (TMDD 3.3.12.18).
+        -->
+    <!-- -->
+    <xs:element name="ab3418e-controller" type="Ab3418eControllerExt">
+        <xs:annotation>
+            <xs:documentation>
+                <description>Extended element in the IntersectionSignalStatus dataframe</description>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="Ab3418eControllerExt">
+        <xs:sequence>
+            <xs:element name="flags" type="ab3418-flags" minOccurs="0"/>
+            <xs:element name="status" type="ab3418-status" minOccurs="0"/>
+            <xs:element name="pattern-number" type="ab3418-pattern" minOccurs="0"/>
+            <xs:element name="green-yellow-overlap" type="ab3418-green-yellow-overlap" minOccurs="0"/>
+            <xs:element name="preemption" type="ab3418-preemption" minOccurs="0"/>
+            <xs:element name="phase-call" type="ab3418-phase-call" minOccurs="0"/>
+            <xs:element name="ped-call" type="ab3418-phase-call" minOccurs="0"/>
+            <xs:element name="active-phase" type="ab3418-active-phase" minOccurs="0"/>
+            <xs:element name="ring-0-interval" type="ab3418-ring-interval" minOccurs="0"/>
+            <xs:element name="ring-1-interval" type="ab3418-ring-interval" minOccurs="0"/>
+            <xs:element name="presence1" type="ab3418-presence" minOccurs="0"/>
+            <xs:element name="presence2" type="ab3418-presence" minOccurs="0"/>
+            <xs:element name="presence3" type="ab3418-presence" minOccurs="0"/>
+            <xs:element name="presence4" type="ab3418-presence" minOccurs="0"/>
+            <xs:element name="master-clock" type="ab3418-clock" minOccurs="0"/>
+            <xs:element name="local-clock" type="ab3418-clock" minOccurs="0"/>
+            <xs:element name="intersection-offset-reference" type="ab3418-intersection-offset-reference" minOccurs="0"/>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--  -->
+    <!-- ab3418-flags 
+    	Additional flags
+		Bit 0 <==> focus (default 0 - no focus)
+		Bits 1-7 <==> reserved unused
+		-->
+    <!--  -->
+    <xs:simpleType name="ab3418-flags">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+
+    <!--  -->
+    <!-- ab3418-status 
+    	Bit values, where bit 7 is left-most and bit 8 is right-most:
+		If bit 7 = 1 then controller has a critical alarm pending
+		If bit 6 = 1 then controller has a non-critical alarm pending
+		If bit 5 = 1 then controller has a detector fault pending
+		If bit 4 = 1 then controller has a coordination alarm pending
+		If bit 3 = 1 then controller is in local override mode
+		If bit 2 = 1 then controller has passed local zero since last request
+		If bit 1 = 1 then cabinet flash is occurring
+		If bit 0 = 1 then controller is in preempt
+    	-->
+    <!--  -->
+    <xs:simpleType name="ab3418-status">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+
+    <!--  -->
+    <!-- ab3418-pattern 
+    	Represents pattern number of current pattern
+    	-->
+    <!--  -->
+    <xs:simpleType name="ab3418-pattern">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+
+    <!--  -->
+    <!-- ab3418-green-yellow-overlap 
+   		Bits 0-3 <==> Green overlaps A-D
+		Bits 4-7 <==> Yellow overlaps A-D
+		-->
+    <!--  -->
+    <xs:simpleType name="ab3418-green-yellow-overlap">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+
+    <!--  -->
+    <!-- ab3418-preemption 
+		Bits 0-3 <==> EV A-D
+		Bits 4-5 <==> RR 1-2
+		Bit 6 = pattern transition
+		Bit 7 unused
+		-->
+    <!--  -->
+    <xs:simpleType name="ab3418-preemption">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+
+    <!--  -->
+    <!-- ab3418-phase-call
+    	Bit values, where bit 7 is left-most and bit 8 is right-most:
+		If bit 7 = 1 then Phase 8 is green, otherwise it is not green
+		If bit 6 = 1 then Phase 7 is green, otherwise it is not green
+		If bit 5 = 1 then Phase 6 is green, otherwise it is not green
+		If bit 4 = 1 then Phase 5 is green, otherwise it is not green
+		If bit 3 = 1 then Phase 4 is green, otherwise it is not green
+		If bit 2 = 1 then Phase 3 is green, otherwise it is not green
+		If bit 1 = 1 then Phase 2 is green, otherwise it is not green
+		If bit 0 = 1 then Phase 1 is green, otherwise it is not green
+    	-->
+    <!--  -->
+    <xs:simpleType name="ab3418-phase-call">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+
+    <!--  -->
+    <!-- ab3418-active-phase 
+		Bits 0-7 <==> Phases 1-8
+		Bit set true for phase active
+	    -->
+    <!--  -->
+    <xs:simpleType name="ab3418-active-phase">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+
+    <!--  -->
+    <!-- ab3418-ring-interval -->
+    <!--  -->
+    <xs:simpleType name="ab3418-ring-interval">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedInt">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="15"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="walk"/>
+					<xs:enumeration value="dontWalk"/>
+					<xs:enumeration value="minGreen"/>
+					<xs:enumeration value="addedInitial"/>
+					<xs:enumeration value="passageResting"/>
+					<xs:enumeration value="maxGap"/>
+					<xs:enumeration value="minGap"/>
+					<xs:enumeration value="redRest"/>
+					<xs:enumeration value="preemption"/>
+					<xs:enumeration value="stopTime"/>
+					<xs:enumeration value="redRevert"/>
+					<xs:enumeration value="maxTermination"/>
+					<xs:enumeration value="gapTermination"/>
+					<xs:enumeration value="forceOff"/>
+					<xs:enumeration value="redClearance"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+    </xs:simpleType>
+
+    <!--  -->
+    <!-- ab3418-presence 
+		Presence bits set true for positive presence
+		Each bit represents one detector
+	    -->
+    <!--  -->
+    <xs:simpleType name="ab3418-presence">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+
+    <!--  -->
+    <!-- ab3418-clock -->
+    <!--  -->
+    <xs:simpleType name="ab3418-clock">
+        <xs:restriction base="xs:unsignedByte"/>
+    </xs:simpleType>
+
+    <!--  -->
+    <!-- ab3418-intersection-offset-reference -->
+    <!--  -->
+    <xs:simpleType name="ab3418-intersection-offset-reference">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedInt">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="9"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="earliestStartOfMsg"/>
+					<xs:enumeration value="latestStartOfMsg"/>
+					<xs:enumeration value="endOfMsg"/>
+					<xs:enumeration value="crossingBarrierAfterMsg"/>
+					<xs:enumeration value="earliestStartOfMsy"/>
+					<xs:enumeration value="latestStartOfMsy"/>
+					<xs:enumeration value="earliestStartOfMsr"/>
+					<xs:enumeration value="endOfMsr"/>
+					<xs:enumeration value="other"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+    </xs:simpleType>
+
+
+    <!--  -->
+    <!-- ab3418-presence-index
+        This extended element will be used in the DetectorInventoryDetails data frame and represents 
+        the detector number in the presenceN elements in the ab3418eControllerStatusExt extended data frame.
+    	-->
+    <!--  -->
+    <xs:element name="ab3418-presence-index" type="ab3418-presence-index-ext">
+        <xs:annotation>
+            <xs:documentation>
+                <description>Extended element in the DetectorInventoryDetails dataframe</description>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:simpleType name="ab3418-presence-index-ext">
+        <xs:restriction base="xs:unsignedInt">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="128"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

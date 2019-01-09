@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  -->
+<xs:schema xmlns="urn:edu:berkeley:path:cc:schema:ccExtension"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:edu:berkeley:path:cc:schema:ccExtension"
+    elementFormDefault="unqualified" attributeFormDefault="unqualified" version="v1.1.1">
+
+    <!-- -->
+    <!-- DetectorDataExtended Data Frame
+        ============================================
+        This data frame extends the "DetectorData" data frame to include elements that
+        are used internally by the Data Hub.
+        "hub-org-id" and "hub-sensor-id" are integer identifiers which are generated
+        by the Data Hub and they are unique in the system across all organizations.
+        The Data Hub uses these ID's to reference the assets, but the ID's reported
+        by the organization are still in the DetectorData data frame so that the
+        Corridor Management System can reference those ID's when communicating with
+        the agencies.
+        "inventory-check" is the result of an inventory validation check in the Data Hub
+        and it is one of the quality indicators for the data.
+        "flow-balance-check" is the result of another quality check and it is a data frame
+        containing the results of each flow balance test in which the detector is included.
+        In general the quality indicators are used by the Data Hub and Decision Support System
+        to determine whether the data is "good enough" to include in the processing, and
+        the quality check tests will evolve as the system is developed.
+
+        It is set in DetectorData.Any
+        -->
+    <!-- -->
+    <xs:element name="detector-data-ext" type="DetectorDataExtended">
+        <xs:annotation>
+            <xs:documentation>
+                <description>Extended element in the DetectorData dataframe</description>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="DetectorDataExtended">
+        <xs:sequence>
+            <xs:element name="hub-org-id" type="hash-sequence-id"/>
+            <xs:element name="hub-station-id" type="hash-sequence-id"/>
+            <xs:element name="hub-sensor-id" type="hash-sequence-id" minOccurs="0"/>
+            <xs:element name="hub-zoned-datetime" type="hash-sequence-id"/>
+            <xs:element name="inventory-check" type="Inventory-check-code"/>
+            <xs:element name="flow-balance-check" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence maxOccurs="128">
+                        <xs:element name="flow-balance-result-list" type="FlowBalanceResult"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="data-value-check" type="Enumeration-pass-fail" minOccurs="0"/>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- -->
+    <!-- FlowBalanceResult Data Frame-->
+    <!-- -->
+    <xs:complexType name="FlowBalanceResult">
+        <xs:sequence>
+            <xs:element name="flow-bal-test-id" type="Database-sequence-id"/>
+            <xs:element name="flow-bal-result" type="Enumeration-pass-fail"/>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--  -->
+    <!-- Database-sequence-id -->
+    <!--  -->
+    <xs:simpleType name="Database-sequence-id">
+        <xs:restriction base="xs:unsignedInt"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="hash-sequence-id">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+    <!-- -->
+    <!-- Enumeration-pass-fail -->
+    <!-- -->
+    <xs:simpleType name="Enumeration-pass-fail">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:unsignedInt">
+                    <xs:minInclusive value="1"/>
+                    <xs:maxInclusive value="2"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="pass"/>
+                    <xs:enumeration value="fail"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+    <!-- -->
+    <!-- Inventory-check-code -->
+    <!-- -->
+    <xs:simpleType name="Inventory-check-code">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:unsignedInt">
+                    <xs:minInclusive value="1"/>
+                    <xs:maxInclusive value="3"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="pass"/>
+                    <xs:enumeration value="fail: in inventory but missing data"/>
+                    <xs:enumeration value="fail: not in inventory"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+</xs:schema>
