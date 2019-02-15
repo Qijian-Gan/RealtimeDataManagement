@@ -28,7 +28,9 @@ public class DetectorDataTestResult {
     private String errorMessages;
     private boolean validOrNot;
 
+    //****************************************************************************************
     // Get functions
+    //****************************************************************************************
     public boolean isOrganizationInformationValid() {
         return isOrganizationInformationValid;
     }
@@ -81,7 +83,9 @@ public class DetectorDataTestResult {
         return validOrNot;
     }
 
+    //****************************************************************************************
     // Set functions
+    //****************************************************************************************
     public void setOrganizationInformationValid(boolean organizationInformationValid) {
         isOrganizationInformationValid = organizationInformationValid;
     }
@@ -126,7 +130,9 @@ public class DetectorDataTestResult {
         isDataValueCheckValid = dataValueCheckValid;
     }
 
+    //****************************************************************************************
     // Initialization
+    //****************************************************************************************
     public void Initialization(){
         isOrganizationInformationValid=true;
         isDetectorDataListExist=true;
@@ -143,10 +149,12 @@ public class DetectorDataTestResult {
         validOrNot=true;
     }
 
+    //****************************************************************************************
     // Checking each element
+    //****************************************************************************************
     public void Check(DetectorData detectorData){
 
-        // Organization Information
+        // Organization Information: Required
         if(detectorData.getOrganizationInformation()==null){
             isOrganizationInformationValid=false;
             errorMessages+="Empty organization information;";
@@ -157,22 +165,20 @@ public class DetectorDataTestResult {
             }
         }
 
-        // Detector Data List
+        // Detector Data List: Required
         if(detectorData.getDetectorDataList()==null){
             isDetectorDataListExist=false;
-            isDetectorDataListValid=false;
             errorMessages+="Empty detector data list;";
         }else{
             if(detectorData.getDetectorDataList().getDetectorDataDetail()==null){
                 isDetectorDataListExist=false;
-                isDetectorDataListValid=false;
                 errorMessages+="Empty detector data list;";
             }else{
                 List<DetectorDataDetail> detectorDataDetailList=detectorData.getDetectorDataList().getDetectorDataDetail();
                 // Check the size
                 if(detectorDataDetailList.size()>maxDetectorDataList){
                     isDetectorDataListOutOfBound=true;
-                    errorMessages+="Detector data list out of bound;";
+                    errorMessages+="Detector data list is out of bound;";
                 }
                 // Check the list
                 for(int i=0;i<detectorDataDetailList.size();i++){
@@ -191,10 +197,11 @@ public class DetectorDataTestResult {
             }
         }
 
-        // Detector data ext
+        // Detector data ext: Currently do not check these fields
         // isHubOrgIdValid; isHubSensorIdValid; isInventoryCheckValid;  isFlowBalanceCheckValid;
         // flow-balance-test-id (big int); isDataValueCheckValid;
-        if(!isOrganizationInformationValid || !isDetectorDataListExist || !isDetectorDataListValid){
+
+        if(errorMessages!=""){ // Contain error messages
             validOrNot=false;
         }
     }

@@ -108,14 +108,14 @@ public class IntersectionSignalTPInventoryPhaseTestResult {
         if(intersectionSignalTPInventoryPhase.getPhaseIdentifier()<0 ||
                 intersectionSignalTPInventoryPhase.getPhaseIdentifier()>255){
             isPhaseIdentifierValid=false;
-            errorMessages+="Phase identifier invalid;";
+            errorMessages+="Phase identifier is invalid;";
         }
 
         // Coordinated Phase
         if(intersectionSignalTPInventoryPhase.getCoordinatedPhase()!=0 ||
                 intersectionSignalTPInventoryPhase.getCoordinatedPhase()!=1){
             isCoordinatedPhaseValid=false;
-            errorMessages+="Coordinated phase invalid;";
+            errorMessages+="Coordinated phase is invalid;";
         }
 
         // Split Mode
@@ -127,36 +127,33 @@ public class IntersectionSignalTPInventoryPhaseTestResult {
         // Phase Split
         if(intersectionSignalTPInventoryPhase.getPhaseSplit()<0 ||intersectionSignalTPInventoryPhase.getPhaseSplit()>255){
             isPhaseSplitValid=false;
-            errorMessages+="Phase split invalid;";
+            errorMessages+="Phase split is invalid;";
         }
 
         // Maximum green duration
         if(intersectionSignalTPInventoryPhase.getMaximumGreenDuration()<0 ||intersectionSignalTPInventoryPhase.getMaximumGreenDuration()>3600){
             isMaximumGreenDurationValid=false;
-            errorMessages+="Maximum green duration invalid;";
+            errorMessages+="Maximum green duration is invalid;";
         }
 
         // Minimum green duration
         if(intersectionSignalTPInventoryPhase.getMinimumGreenDuration()<0 ||intersectionSignalTPInventoryPhase.getMinimumGreenDuration()>3600){
             isMinimumGreenDurationValid=false;
-            errorMessages+="Minimum green duration invalid;";
+            errorMessages+="Minimum green duration is invalid;";
         }
 
         // Vehicle Clearance Duration
         if(intersectionSignalTPInventoryPhase.getVehicleClearanceDuration()<0 ||
                 intersectionSignalTPInventoryPhase.getVehicleClearanceDuration()>3600){
             isVehicleClearanceDurationValid=false;
-            errorMessages+="Vehicle clearance duration invalid;";
+            errorMessages+="Vehicle clearance duration is invalid;";
         }
 
         // Vehicle Red Duration
         if(intersectionSignalTPInventoryPhase.getVehicleRedDuration()<0 || intersectionSignalTPInventoryPhase.getVehicleRedDuration()>3600){
             isVehicleRedDurationValid=false;
-            errorMessages+="Vehicle red duration invalid;";
+            errorMessages+="Vehicle red duration is invalid;";
         }
-
-
     }
-
 
 }

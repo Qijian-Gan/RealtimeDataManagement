@@ -3,7 +3,7 @@ package edu.berkeley.path.qualityTest.DetectorData;
 import org.tmdd._303.messages.DetectorDataDetail;
 
 public class DetectorDataDetailTestResult {
-    private boolean isStationIdValid; // Required by PATH
+    private boolean isStationIdValid; // Required by PATH: Station ID is the controller/intersection ID
     private boolean isDetectorIdValid; // Required
     private boolean isDetectionTimeStampValid; //Required
 
@@ -21,17 +21,19 @@ public class DetectorDataDetailTestResult {
     private boolean isVehicleSpeedValid; // Required by PATH; Integer: 0...255
     private boolean isQueueLengthValid; // Required by PATH; Integer: 0...10000
     private boolean isVehicleStopsValid; // Required by PATH; Integer: 0...100000
+
     // Required by PATH; Enumerated: on(1), off(2),out-of-service(3), unavailable(4), unknown(5),marginal(6),failed(7),other(8)
     private boolean isDetectorStatusValid;
 
     // Extension required by PATH
-    // Vehicle occupancy ext
+    // Vehicle occupancy ext: have more decimals for occupancy
     private boolean isVehicleOccupancyExtensionValid;
 
     private String errorMessages;
 
-
+    // ***********************************************
     // Get functions
+    // ***********************************************
     public boolean isStationIdValid() {
         return isStationIdValid;
     }
@@ -96,7 +98,9 @@ public class DetectorDataDetailTestResult {
         return errorMessages;
     }
 
+    // ***********************************************
     // Set functions
+    // ***********************************************
     public void setStationIdValid(boolean stationIdValid) {
         isStationIdValid = stationIdValid;
     }
@@ -161,7 +165,9 @@ public class DetectorDataDetailTestResult {
         this.errorMessages = errorMessages;
     }
 
+    // ***********************************************
     // Initialization
+    // ***********************************************
     public void Initialization(){
         isStationIdValid=true;
         isDetectorIdValid=true;
@@ -181,37 +187,39 @@ public class DetectorDataDetailTestResult {
         errorMessages="";
     }
 
+    // ***********************************************
     // Check each element
+    // ***********************************************
     public void Check(DetectorDataDetail detectorDataDetail){
 
-        // Station Id
+        // Station Id: Required
         if(detectorDataDetail.getStationId()==null){
             isStationIdValid=false;
             errorMessages+="Empty station ID;";
         }
 
-        // Detector Id
+        // Detector Id: Required
         if(detectorDataDetail.getDetectorId()==null){
             isDetectorIdValid=false;
             errorMessages+="Empty detector ID;";
         }
 
-        // Detection Time Stamp
+        // Detection Time Stamp: Required
         if(detectorDataDetail.getDetectionTimeStamp()==null){
             isDetectionTimeStampValid=false;
             errorMessages+="Empty detection time stamp;";
         }else{
             if(detectorDataDetail.getDetectionTimeStamp().getDate()==null){
                 isDetectionTimeStampValid=false;
-                errorMessages+="Detection time stamp invalid: empty date;";
+                errorMessages+="Detection time stamp is invalid: empty date;";
             }
             if(detectorDataDetail.getDetectionTimeStamp().getTime()==null){
                 isDetectionTimeStampValid=false;
-                errorMessages+="Detection time stamp invalid: empty time;";
+                errorMessages+="Detection time stamp is invalid: empty time;";
             }
         }
 
-        // Vehicle Count
+        // Vehicle Count: Required
         int vehicleCount=-1;
         double vehicleOccupancy=-1;
         if(detectorDataDetail.getVehicleCount()==null){
@@ -221,11 +229,11 @@ public class DetectorDataDetailTestResult {
             vehicleCount=detectorDataDetail.getVehicleCount().intValue();
             if(vehicleCount>maxVehicleCount ||vehicleCount<0){
                 isVehicleCountValid=false;
-                errorMessages+="Vehicle count out of bound;";
+                errorMessages+="Vehicle count is out of bound;";
             }
         }
 
-        // Vehicle Occupancy
+        // Vehicle Occupancy: Required; It would be better to have decimals
         if(detectorDataDetail.getVehicleOccupancy()==null){
             isVehicleOccupancyValid=false;
             errorMessages+="Empty vehicle occupancy;";
@@ -247,33 +255,33 @@ public class DetectorDataDetailTestResult {
             isFlowOccupancyRelationValid=false;
         }
 
-        // Start Time
+        // Start Time: Required
         if(detectorDataDetail.getStartTime()==null){
             isStartTimeValid=false;
             errorMessages+="Empty start time;";
         }else{
             if(detectorDataDetail.getStartTime().getDate()==null){
                 isStartTimeValid=false;
-                errorMessages+="Start time invalid: empty date;";
+                errorMessages+="Start time is invalid: empty date;";
             }
             if(detectorDataDetail.getStartTime().getTime()==null){
                 isStartTimeValid=false;
-                errorMessages+="Start time invalid: empty time;";
+                errorMessages+="Start time is invalid: empty time;";
             }
         }
 
-        // End Time
+        // End Time: Required
         if(detectorDataDetail.getEndTime()==null){
             isEndTimeValid=false;
             errorMessages+="Empty end time;";
         }else{
             if(detectorDataDetail.getEndTime().getDate()==null){
                 isEndTimeValid=false;
-                errorMessages+="End time invalid: empty date;";
+                errorMessages+="End time is invalid: empty date;";
             }
             if(detectorDataDetail.getEndTime().getTime()==null){
                 isEndTimeValid=false;
-                errorMessages+="End time invalid: empty time;";
+                errorMessages+="End time is invalid: empty time;";
             }
         }
 
@@ -289,55 +297,58 @@ public class DetectorDataDetailTestResult {
                     Double.parseDouble(detectorDataDetail.getEndTime().getTime())/10000.0;
             if(endDateTime<startDateTime){
                 isStartAndEndTimeRelationValid=false;
-                errorMessages+="Start time and end time relation invalid;";
+                errorMessages+="Start time and end time relation is invalid;";
             }
         }else{
             isStartAndEndTimeRelationValid=false;
         }
 
-        // Detector Data Type
+        // Detector Data Type: Required
         if(detectorDataDetail.getDetectorDataType()==null){
             isDetectorDataTypeValid=false;
             errorMessages+="Empty detector data type;";
         }
 
+        //****************************************************************************************
+        // For the rest of the fields, we are not checking them even though they are required by PATH
+        //****************************************************************************************
         // Vehicle Speed
         if(detectorDataDetail.getVehicleSpeed()==null){
             isVehicleSpeedValid=false;
-            errorMessages+="Empty vehicle speed;";
+            //errorMessages+="Empty vehicle speed;";
         }else{
             if(detectorDataDetail.getVehicleSpeed().intValue()>255 || detectorDataDetail.getVehicleSpeed().intValue()<0){
                 isVehicleSpeedValid=false;
-                errorMessages+="Vehicle speed out of bound;";
+                //errorMessages+="Vehicle speed is out of bound;";
             }
         }
 
         // Queue Length
         if(detectorDataDetail.getQueueLength()==null){
             isQueueLengthValid=false;
-            errorMessages+="Empty queue length;";
+            //errorMessages+="Empty queue length;";
         }else{
             if(detectorDataDetail.getQueueLength().intValue()<0 || detectorDataDetail.getQueueLength().intValue()>10000){
                 isQueueLengthValid=false;
-                errorMessages+="Queue length out of bound;";
+                //errorMessages+="Queue length is out of bound;";
             }
         }
 
         // Vehicle Stops
         if(detectorDataDetail.getVehicleStops()==null){
             isVehicleStopsValid=false;
-            errorMessages+="Empty vehicle stops;";
+            //errorMessages+="Empty vehicle stops;";
         }else{
             if(detectorDataDetail.getVehicleStops().intValue()<0 || detectorDataDetail.getVehicleStops().intValue()>100000){
                 isVehicleStopsValid=false;
-                errorMessages+="Vehicle stops out of bound;";
+                //errorMessages+="Vehicle stops is out of bound;";
             }
         }
 
         // Detector status
         if(detectorDataDetail.getDetectorStatus()==null){
             isDetectorStatusValid=false;
-            errorMessages+="Empty detector status;";
+            //errorMessages+="Empty detector status;";
         }
 
         // Vehicle Occupancy Ext
