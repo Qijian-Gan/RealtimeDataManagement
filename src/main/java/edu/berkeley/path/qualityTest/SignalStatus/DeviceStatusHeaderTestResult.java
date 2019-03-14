@@ -4,8 +4,11 @@ import org.tmdd._303.messages.DeviceStatusHeader;
 
 public class DeviceStatusHeaderTestResult {
 
+    // Organization information
     private boolean isOrganizationInformationExist; // TMDD format
     private boolean isOrganizationIdValid;
+
+    // Device ID
     private boolean isDeviceIdValid; // String
 
     // Enumerated: on(1),off(2),out-of-service(3),unavailable(4),unknown(5),marginal(6),failed(7),other(8)
@@ -16,11 +19,15 @@ public class DeviceStatusHeaderTestResult {
     // Enumerated: operational(1),offline(2),failed(3),unknown(4)
     private boolean isDeviceCommStatusValid;
 
+    // Other attributes
     private boolean isOperatorIdValid;// String
     private boolean isEventIdValid; // String
     private boolean isResponsePlanIdValid; // String
     private boolean isLastCommTimeValid; // DateTimeZone
+
+    // Assessment
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isOrganizationInformationExist() {
@@ -65,6 +72,10 @@ public class DeviceStatusHeaderTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -112,6 +123,10 @@ public class DeviceStatusHeaderTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         isOrganizationInformationExist=true;
@@ -125,6 +140,7 @@ public class DeviceStatusHeaderTestResult {
         isResponsePlanIdValid=true;
         isLastCommTimeValid=true;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Check each element
@@ -197,6 +213,36 @@ public class DeviceStatusHeaderTestResult {
                 errorMessages+="Last comm time invalid: empty time;";
             }
         }
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Organization Information: Required
+        if(!isOrganizationInformationExist
+                || !isOrganizationIdValid){
+            validOrNot=false;
+        }
+
+        // Device Id : Required
+        if(!isDeviceIdValid){
+            validOrNot=false;
+        }
+
+        // Device Status: Required
+        if(!isDeviceStatusValid){
+            validOrNot=false;
+        }
+
+        // We can add more in the future if needed!
+        // Users can configure this part
+
+        return validOrNot;
     }
 
 }

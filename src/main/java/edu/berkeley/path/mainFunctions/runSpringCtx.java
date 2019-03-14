@@ -1,15 +1,14 @@
-package edu.berkeley.path;
+package edu.berkeley.path.mainFunctions;
 
-import org.apache.commons.logging.Log;
+import edu.berkeley.path.mainFunctions.Application;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.io.IoBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class Test {
+public class runSpringCtx {
 
     private static final Logger LOG = LogManager.getLogger(Application.class);
 

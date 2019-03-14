@@ -10,6 +10,7 @@ public class IntersectionSignalSequenceDataTestResult {
     private int maxSequenceData=16;
     private boolean isSequenceDataOutOfBound;
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isRingIdentifierValid() {
@@ -24,12 +25,16 @@ public class IntersectionSignalSequenceDataTestResult {
         return isSequenceDataOutOfBound;
     }
 
+    public int getMaxSequenceData() {
+        return maxSequenceData;
+    }
+
     public String getErrorMessages() {
         return errorMessages;
     }
 
-    public int getMaxSequenceData() {
-        return maxSequenceData;
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -53,12 +58,17 @@ public class IntersectionSignalSequenceDataTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         isRingIdentifierValid=true;
         isSequenceDataExist=true;
         isSequenceDataOutOfBound=false;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Check each element
@@ -84,7 +94,24 @@ public class IntersectionSignalSequenceDataTestResult {
                 }
             }
         }
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
     }
 
+    private boolean assessmentValidOrNot(){
 
+        boolean validOrNot=true;
+        // Ring Identifier
+        if(!isRingIdentifierValid){
+            validOrNot=false;
+        }
+
+        // Sequence Data
+        if(!isSequenceDataExist || isSequenceDataOutOfBound){
+            validOrNot=false;
+        }
+
+        return validOrNot;
+    }
 }

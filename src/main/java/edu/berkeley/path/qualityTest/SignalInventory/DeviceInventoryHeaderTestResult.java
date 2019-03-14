@@ -4,8 +4,10 @@ import org.tmdd._303.messages.DeviceInventoryHeader;
 
 public class DeviceInventoryHeaderTestResult {
 
+    // Organization Information
     private boolean isOrganizationInformationExist;
     private boolean isOrganizationIdValid;
+    // Device
     private boolean isDeviceIdValid;
     private boolean isDeviceLocationValid;
     private boolean isDeviceNameValid;
@@ -15,6 +17,7 @@ public class DeviceInventoryHeaderTestResult {
     private boolean isControllerDescriptionValid; // Required by PATH;
     private boolean isLastUpdateTimeValid; // Required by PATH
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isOrganizationInformationExist() {
@@ -55,6 +58,10 @@ public class DeviceInventoryHeaderTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -98,6 +105,10 @@ public class DeviceInventoryHeaderTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         isOrganizationInformationExist=true;
@@ -110,6 +121,7 @@ public class DeviceInventoryHeaderTestResult {
         isControllerDescriptionValid=true;
         isLastUpdateTimeValid=true;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Check each element
@@ -189,5 +201,54 @@ public class DeviceInventoryHeaderTestResult {
             }
         }
 
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Organization Information
+        if(!isOrganizationInformationExist || !isOrganizationIdValid){
+            validOrNot=false;
+        }
+
+        // Device Id
+        if(!isDeviceIdValid){
+            validOrNot=false;
+        }
+
+        // Device Location
+        if(!isDeviceLocationValid){
+            validOrNot=false;
+        }
+
+        // Device Name
+        if(!isDeviceNameValid){
+            validOrNot=false;
+        }
+
+        // Device Description
+        if(!isDeviceDescriptionValid){
+            validOrNot=false;
+        }
+
+        // Device Control Type
+        if(!isDeviceControlTypeValid){
+            validOrNot=false;
+        }
+
+        // Controller Description
+        if(!isControllerDescriptionValid){
+            validOrNot=false;
+        }
+
+        // Last Update Time
+        if(!isLastUpdateTimeValid){
+            validOrNot=false;
+        }
+
+        return validOrNot;
     }
 }

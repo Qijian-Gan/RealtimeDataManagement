@@ -16,6 +16,7 @@ public class DetectorStationInventoryHeaderTestResult {
     // device url, last update time
 
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isOrganizationInformationValid() {
@@ -38,6 +39,10 @@ public class DetectorStationInventoryHeaderTestResult {
         return errorMessages;
     }
 
+    public boolean isValidOrNot() {
+        return validOrNot;
+    }
+
     // Set functions
     public void setOrganizationInformationValid(boolean organizationInformationValid) {
         isOrganizationInformationValid = organizationInformationValid;
@@ -55,8 +60,12 @@ public class DetectorStationInventoryHeaderTestResult {
         isDeviceNameValid = deviceNameValid;
     }
 
-    public void setErrorMessesages(String errorMessesages) {
-        this.errorMessages = errorMessesages;
+    public void setErrorMessages(String errorMessages) {
+        this.errorMessages = errorMessages;
+    }
+
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
     }
 
     // Initialization
@@ -66,6 +75,7 @@ public class DetectorStationInventoryHeaderTestResult {
         this.isDeviceLocationValid=true;
         this.isDeviceNameValid=true;
         this.errorMessages="";
+        this.validOrNot=true;
     }
 
     // Check all required fields
@@ -114,6 +124,40 @@ public class DetectorStationInventoryHeaderTestResult {
             isDeviceNameValid=false;
             errorMessages+="Empty device name;";
         }
+
+        // Currently do not check other fields
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Organization Information
+        if(!isOrganizationInformationValid){
+            validOrNot=false;
+        }
+
+        // Device Id
+        if(!isDeviceIdValid){
+            validOrNot=false;
+        }
+
+        // Device Location
+        if(!isDeviceLocationValid){
+            validOrNot=false;
+        }
+
+        // Device Name
+        if(!isDeviceNameValid){
+            validOrNot=false;
+        }
+
+        // Currently do not check other fields
+
+        return validOrNot;
     }
 
 }

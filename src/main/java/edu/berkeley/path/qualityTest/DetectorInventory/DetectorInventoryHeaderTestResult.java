@@ -3,6 +3,7 @@ package edu.berkeley.path.qualityTest.DetectorInventory;
 import org.tmdd._303.messages.DeviceInventoryHeader;
 
 public class DetectorInventoryHeaderTestResult {
+
     // This part is required by TMDD
     private boolean isOrganizationInformationValid; // Required; Struct: OrganizationInformation
     private boolean isDeviceIdValid; // Required; Struct: Organization resource identifier; String
@@ -16,6 +17,7 @@ public class DetectorInventoryHeaderTestResult {
     private boolean isLastUpdateTimeValid; // Required by PATH; Struct: DateTimeZone
 
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isOrganizationInformationValid() {
@@ -52,6 +54,10 @@ public class DetectorInventoryHeaderTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -91,6 +97,10 @@ public class DetectorInventoryHeaderTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         this.isOrganizationInformationValid=true;
@@ -102,6 +112,7 @@ public class DetectorInventoryHeaderTestResult {
         this.isControllerDescriptionValid=true;
         this.isLastUpdateTimeValid=true;
         this.errorMessages="";
+        this.validOrNot=true;
     }
 
     // Check each element
@@ -183,6 +194,57 @@ public class DetectorInventoryHeaderTestResult {
                 errorMessages+="Last update time: empty time;";
             }
         }
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Organization Information
+        if(!isOrganizationInformationValid){
+            validOrNot=false;
+        }
+
+        // Device Id
+        if(!isDeviceIdValid){
+            validOrNot=false;
+        }
+
+        // Device Location
+        if(!isDeviceLocationValid){
+            validOrNot=false;
+        }
+
+        // Device Name
+        if(!isDeviceNameValid){
+            validOrNot=false;
+        }
+
+        // Device Description
+        if(!isDeviceDescriptionValid){
+            validOrNot=false;
+        }
+
+        // Device Control Type
+        if(!isDeviceControlTypeValid){
+            validOrNot=false;
+        }
+
+        // Device Control Description
+        if(!isControllerDescriptionValid){
+            validOrNot=false;
+        }
+
+        // Last Update Time
+        if(!isLastUpdateTimeValid){
+            validOrNot=false;
+        }
+
+        return validOrNot;
     }
 
 }

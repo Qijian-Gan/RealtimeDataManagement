@@ -331,7 +331,7 @@ public class IntersectionSignalTimingPatternInventoryTestResult {
                     intersectionSignalTPInventoryPhaseTestResult.Initialization();
                     intersectionSignalTPInventoryPhaseTestResult.Check(intersectionSignalTPInventoryPhaseList.get(i));
                     intersectionSignalTPInventoryPhaseTestResultList.add(intersectionSignalTPInventoryPhaseTestResult);
-                    if(intersectionSignalTPInventoryPhaseTestResult.getErrorMessages()!=""){
+                    if(!intersectionSignalTPInventoryPhaseTestResult.isValidOrNot()){
                         errorMassagePhaseTPListIndex.add(i);
                     }
                 }
@@ -362,7 +362,7 @@ public class IntersectionSignalTimingPatternInventoryTestResult {
                     intersectionSignalSequenceDataTestResult.Initialization();
                     intersectionSignalSequenceDataTestResult.Check(intersectionSignalSequenceDataList.get(i));
                     intersectionSignalSequenceDataTestResultList.add(intersectionSignalSequenceDataTestResult);
-                    if(intersectionSignalSequenceDataTestResult.getErrorMessages()!=""){
+                    if(!intersectionSignalSequenceDataTestResult.isValidOrNot()){
                         errorMessageSequenceDataList.add(i);
                     }
                 }
@@ -391,9 +391,62 @@ public class IntersectionSignalTimingPatternInventoryTestResult {
         // Intersection Signal TP Inventory Extension
         // currently do not check this part
 
-        if(errorMessages!=""){
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // OrganizationInformation
+        if(!isOrganizationInformationExist || !isOrganizationIdValid){
             validOrNot=false;
         }
+
+        // Device Id
+        if(!isDeviceIdValid){
+            validOrNot=false;
+        }
+
+        // Timing Pattern Id
+        if(!isTimingPatternIdValid){
+            validOrNot=false;
+        }
+
+        // Timing Pattern Name
+        if(!isTimingPatternNameValid){
+            validOrNot=false;
+        }
+
+        // Cycle Length
+        if(!isCycleLengthValid){
+            validOrNot=false;
+        }
+
+        // Offset Time
+        if(!isOffsetTimeValid){
+            validOrNot=false;
+        }
+
+        // Phase TP List
+        if(!isPhaseTPListExist || !isPhaseTPListValid || isPhaseTPListOutOfBound){
+            validOrNot=false;
+        }
+
+        // Sequence Information
+        if(!isSequenceInformationExist || !isSequenceInformationValid || isSequenceInformationOutOfBound){
+            validOrNot=false;
+        }
+
+        // Last Update Time
+        if(!isLastUpdateTimeValid){
+            validOrNot=false;
+        }
+
+        // Do not check the extended field: Signal-Plan-Inventory-Ext
+
+        return validOrNot;
     }
 
 }

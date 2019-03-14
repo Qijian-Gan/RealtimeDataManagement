@@ -1,4 +1,4 @@
-package edu.berkeley.path;
+package edu.berkeley.path.settings;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -54,9 +54,10 @@ public class Configuration {
     public static String collectionIntersectionSignalStatusWithTestResult="intersectionSignalStatusWithTestResult";
 
     // Signal plan Inventory
-    // Todo: update the message topic
-    public static String intersectionSignalPlanInventory = "Consumer.research.VirtualTopic.CT.D7.210.DSSInterface.IntersectionSignalPlanInventory";
-    public static String outputSignalPlanInventoryLocation="\\data\\signalPlanInventory";
+    public static String intersectionSignalPlanInventory = "Consumer.research.VirtualTopic.CT.D7.DSS.DataOrdered.IntersectionSignalTimingPatternInventory";
+    public static String outputSignalPlanInventoryLocation="\\data\\signalTimingPatternInventory";
+    public static String collectionIntersectionSignalTimingPattern="intersectionSignalTimingPattern";
+    public static String collectionIntersectionSignalTimingPatternWithTestResult="intersectionSignalTimingPatternsWithTestResult";
 
 
     // **************************************************************
@@ -66,6 +67,7 @@ public class Configuration {
     public static String collectionAggregatedFrom="detectorDataIndividual";
     public static String collectionAggregatedTo="detectorDataAggregated";
     public static int interval=300; // in Seconds
+    public static String outputFolder="\\data\\output\\";
 
 
     // **************************************************************
@@ -75,10 +77,20 @@ public class Configuration {
     public static String localFolderForDetectorData="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\detectorData";
     public static String localFolderForDetectorInventory="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\detectorInventory";
     public static String localFolderForDetectorStatus="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\detectorStatus";
-    // ******************Detector Data*******************************
+
+    public static String readFolderForDetectorData="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\read\\detectorData";
+    public static String readFolderForDetectorInventory="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\read\\detectorInventory";
+    public static String readFolderForDetectorStatus="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\read\\detectorStatus";
+
+    // ******************Signal Data*******************************
     public static String localFolderForSignalControlSchedule="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\signalControl";
     public static String localFolderForSignalInventory="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\signalInventory";
     public static String localFolderForSignalPlanInventory="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\signalPlanInventory";
     public static String localFolderForSignalStatus="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\signalStatus";
+
+    public static String readFolderForSignalControlSchedule="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\read\\signalControl";
+    public static String readFolderForSignalInventory="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\read\\signalInventory";
+    public static String readFolderForSignalPlanInventory="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\read\\signalPlanInventory";
+    public static String readFolderForSignalStatus="C:\\Users\\qgan\\Dropbox\\WorkAtBerkeley\\Programs\\RealtimeDataManagement\\data\\read\\signalStatus";
     
 }

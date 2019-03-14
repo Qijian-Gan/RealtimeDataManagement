@@ -22,10 +22,10 @@ public class DetectorDataIndividual {
     private Date detectionTimeStamp;
     private Date startTimeStamp;
     private int startDate; // YYYYMMDD
-    private int startTime; //HHMMSSXXXX
+    private long startTime; //HHMMSSXXXX
     private Date endTimeStamp;
     private int endDate; // YYYYMMDD
-    private int endTime; //HHMMSSXXXX
+    private long endTime; //HHMMSSXXXX
     private String detectorDataType;
     private String detectorStatus;
     private double vehicleCount;
@@ -34,8 +34,8 @@ public class DetectorDataIndividual {
     // Note that: currently do not use queue length and vehicle stops
 
     public DetectorDataIndividual(String _organizationId, String _stationId, String _detectorId, Date _detectionTimeStamp,
-                                  Date _startTimeStamp,int _startDate, int _startTime, Date _endTimeStamp,
-                                  int _endDate, int _endTime, String _detectorDataType, String _detectorStatus,
+                                  Date _startTimeStamp,int _startDate, long _startTime, Date _endTimeStamp,
+                                  int _endDate, long _endTime, String _detectorDataType, String _detectorStatus,
                                   double _vehicleCount, double _vehicleOccupancy, double _vehicleSpeed){
         this.organizationId=_organizationId;
         this.stationId=_stationId;
@@ -79,7 +79,7 @@ public class DetectorDataIndividual {
         return startDate;
     }
 
-    public int getStartTime() {
+    public long getStartTime() {
         return startTime;
     }
 
@@ -91,7 +91,7 @@ public class DetectorDataIndividual {
         return endDate;
     }
 
-    public int getEndTime() {
+    public long getEndTime() {
         return endTime;
     }
 
@@ -148,7 +148,7 @@ public class DetectorDataIndividual {
         this.startDate = startDate;
     }
 
-    public void setStartTime(int startTime) {
+    public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
 
@@ -160,7 +160,7 @@ public class DetectorDataIndividual {
         this.endDate = endDate;
     }
 
-    public void setEndTime(int endTime) {
+    public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
 
@@ -194,12 +194,12 @@ public class DetectorDataIndividual {
             Date startTimeStamp=DateTimeConversion.TMDDDateTimeToRegularDateTime(detectorDataDetailList.get(i).getStartTime().getDate(),
                     detectorDataDetailList.get(i).getStartTime().getTime());
             int startDate=Integer.parseInt(detectorDataDetailList.get(i).getStartTime().getDate());
-            int startTime=Integer.parseInt(detectorDataDetailList.get(i).getStartTime().getTime());
+            long startTime=Long.parseLong(detectorDataDetailList.get(i).getStartTime().getTime());
 
             Date endTimeStamp=DateTimeConversion.TMDDDateTimeToRegularDateTime(detectorDataDetailList.get(i).getEndTime().getDate(),
                     detectorDataDetailList.get(i).getEndTime().getTime());
             int endDate=Integer.parseInt(detectorDataDetailList.get(i).getEndTime().getDate());
-            int endTime=Integer.parseInt(detectorDataDetailList.get(i).getEndTime().getTime());
+            long endTime=Long.parseLong(detectorDataDetailList.get(i).getEndTime().getTime());
 
             String detectorDataType=detectorDataDetailList.get(i).getDetectorDataType();
             String detectorStatus=detectorDataDetailList.get(i).getDetectorStatus();

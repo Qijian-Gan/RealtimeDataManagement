@@ -3,12 +3,12 @@ package edu.berkeley.path.objects;
 import edu.berkeley.path.qualityTest.SignalInventory.IntersectionSignalInventoryTestResult;
 import org.tmdd._303.messages.IntersectionSignalInventory;
 
-public class IntersectionSignlInventoryWithTestResult {
+public class IntersectionSignalInventoryWithTestResult {
 
     private IntersectionSignalInventory message;
     private IntersectionSignalInventoryTestResult testResult;
 
-    public IntersectionSignlInventoryWithTestResult(IntersectionSignalInventory _message,
+    public IntersectionSignalInventoryWithTestResult(IntersectionSignalInventory _message,
                                                     IntersectionSignalInventoryTestResult _testResult){
         this.message=_message;
         this.testResult=_testResult;

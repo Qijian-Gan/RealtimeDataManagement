@@ -1,4 +1,4 @@
-package edu.berkeley.path.database;
+package edu.berkeley.path.database.MongoDB;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;

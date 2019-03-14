@@ -13,6 +13,7 @@ public class IntersectionSignalTPInventoryPhaseTestResult {
     private boolean isVehicleClearanceDurationValid; // Required by PATH
     private boolean isVehicleRedDurationValid; // Required by PATH
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isPhaseIdentifierValid() {
@@ -49,6 +50,10 @@ public class IntersectionSignalTPInventoryPhaseTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -88,6 +93,10 @@ public class IntersectionSignalTPInventoryPhaseTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         isPhaseIdentifierValid=true;
@@ -99,6 +108,7 @@ public class IntersectionSignalTPInventoryPhaseTestResult {
         isVehicleClearanceDurationValid=true;
         isVehicleRedDurationValid=true;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Check each element
@@ -154,6 +164,56 @@ public class IntersectionSignalTPInventoryPhaseTestResult {
             isVehicleRedDurationValid=false;
             errorMessages+="Vehicle red duration is invalid;";
         }
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Phase Identifier
+        if(!isPhaseIdentifierValid){
+            validOrNot=false;
+        }
+
+        // Coordinated Phase
+        if(!isCoordinatedPhaseValid){
+            validOrNot=false;
+        }
+
+        // Split Mode
+        if(!isSplitModeValid){
+            validOrNot=false;
+        }
+
+        // Phase Split
+        if(!isPhaseSplitValid){
+            validOrNot=false;
+        }
+
+        // Maximum Green Duration
+        if(!isMaximumGreenDurationValid){
+            validOrNot=false;
+        }
+
+        // Minimum Green Duration
+        if(!isMinimumGreenDurationValid){
+            validOrNot=false;
+        }
+
+        // Vehicle Clearance Duration
+        if(!isVehicleClearanceDurationValid){
+            validOrNot=false;
+        }
+
+        // Vehicle Red Duration
+        if(!isVehicleRedDurationValid){
+            validOrNot=false;
+        }
+
+        return validOrNot;
     }
 
 }

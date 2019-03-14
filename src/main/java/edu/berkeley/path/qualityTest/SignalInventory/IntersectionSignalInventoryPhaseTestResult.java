@@ -4,12 +4,13 @@ import org.tmdd._303.messages.IntersectionSignalInventoryPhase;
 
 public class IntersectionSignalInventoryPhaseTestResult {
 
-    private boolean isPhaseIdentifierValid;
-    private boolean isCoordinatedPhaseValid;
-    private boolean isConcurrentPhasesListExit; // Required by PATH
+    private boolean isPhaseIdentifierValid; // Phase Id
+    private boolean isCoordinatedPhaseValid; // Coordinated Phase
+    private boolean isConcurrentPhasesListExit; // Concurrent Phase; Required by PATH
     private boolean isConcurrentPhasesListOutOfBound; // Size:1...16
     private int maxConcurrentPhaseList=16;
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isPhaseIdentifierValid() {
@@ -34,6 +35,10 @@ public class IntersectionSignalInventoryPhaseTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -61,6 +66,10 @@ public class IntersectionSignalInventoryPhaseTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         isPhaseIdentifierValid=true;
@@ -68,6 +77,7 @@ public class IntersectionSignalInventoryPhaseTestResult {
         isConcurrentPhasesListExit=true;
         isConcurrentPhasesListOutOfBound=false;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Check each element
@@ -102,8 +112,31 @@ public class IntersectionSignalInventoryPhaseTestResult {
             }
         }
 
+        // Assessment
+        validOrNot=assessmentValidOrNot();
     }
 
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Phase Id
+        if(!isPhaseIdentifierValid){
+            validOrNot=false;
+        }
+
+        // Coordinated Phase
+        if(!isCoordinatedPhaseValid){
+            validOrNot=false;
+        }
+
+        // Concurrent Phases List
+        if(!isConcurrentPhasesListExit || isConcurrentPhasesListOutOfBound){
+            validOrNot=false;
+        }
+
+        return validOrNot;
+    }
 
 
 

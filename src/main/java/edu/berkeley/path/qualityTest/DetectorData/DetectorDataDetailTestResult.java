@@ -30,6 +30,7 @@ public class DetectorDataDetailTestResult {
     private boolean isVehicleOccupancyExtensionValid;
 
     private String errorMessages;
+    private boolean validOrNot;
 
     // ***********************************************
     // Get functions
@@ -94,8 +95,20 @@ public class DetectorDataDetailTestResult {
         return isVehicleOccupancyExtensionValid;
     }
 
+    public double getMaxVehicleOccupancy() {
+        return maxVehicleOccupancy;
+    }
+
+    public int getMaxVehicleCount() {
+        return maxVehicleCount;
+    }
+
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // ***********************************************
@@ -161,8 +174,20 @@ public class DetectorDataDetailTestResult {
         isVehicleOccupancyExtensionValid = vehicleOccupancyExtensionValid;
     }
 
+    public void setMaxVehicleCount(int maxVehicleCount) {
+        this.maxVehicleCount = maxVehicleCount;
+    }
+
+    public void setMaxVehicleOccupancy(double maxVehicleOccupancy) {
+        this.maxVehicleOccupancy = maxVehicleOccupancy;
+    }
+
     public void setErrorMessages(String errorMessages) {
         this.errorMessages = errorMessages;
+    }
+
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
     }
 
     // ***********************************************
@@ -185,6 +210,7 @@ public class DetectorDataDetailTestResult {
         isDetectorStatusValid=true;
         isVehicleOccupancyExtensionValid=true;
         errorMessages="";
+        validOrNot=true;
     }
 
     // ***********************************************
@@ -241,7 +267,7 @@ public class DetectorDataDetailTestResult {
             vehicleOccupancy=detectorDataDetail.getVehicleOccupancy().intValue();
             if(vehicleOccupancy>maxVehicleOccupancy ||vehicleOccupancy<0){
                 isVehicleOccupancyValid=false;
-                errorMessages+="Vehicle occupancy out of bound;";
+                errorMessages+="Vehicle occupancy is out of bound;";
             }
         }
 
@@ -315,45 +341,115 @@ public class DetectorDataDetailTestResult {
         // Vehicle Speed
         if(detectorDataDetail.getVehicleSpeed()==null){
             isVehicleSpeedValid=false;
-            //errorMessages+="Empty vehicle speed;";
+            errorMessages+="Empty vehicle speed;";
         }else{
             if(detectorDataDetail.getVehicleSpeed().intValue()>255 || detectorDataDetail.getVehicleSpeed().intValue()<0){
                 isVehicleSpeedValid=false;
-                //errorMessages+="Vehicle speed is out of bound;";
+                errorMessages+="Vehicle speed is out of bound;";
             }
         }
 
         // Queue Length
         if(detectorDataDetail.getQueueLength()==null){
             isQueueLengthValid=false;
-            //errorMessages+="Empty queue length;";
+            errorMessages+="Empty queue length;";
         }else{
             if(detectorDataDetail.getQueueLength().intValue()<0 || detectorDataDetail.getQueueLength().intValue()>10000){
                 isQueueLengthValid=false;
-                //errorMessages+="Queue length is out of bound;";
+                errorMessages+="Queue length is out of bound;";
             }
         }
 
         // Vehicle Stops
         if(detectorDataDetail.getVehicleStops()==null){
             isVehicleStopsValid=false;
-            //errorMessages+="Empty vehicle stops;";
+            errorMessages+="Empty vehicle stops;";
         }else{
             if(detectorDataDetail.getVehicleStops().intValue()<0 || detectorDataDetail.getVehicleStops().intValue()>100000){
                 isVehicleStopsValid=false;
-                //errorMessages+="Vehicle stops is out of bound;";
+                errorMessages+="Vehicle stops is out of bound;";
             }
         }
 
         // Detector status
         if(detectorDataDetail.getDetectorStatus()==null){
             isDetectorStatusValid=false;
-            //errorMessages+="Empty detector status;";
+            errorMessages+="Empty detector status;";
         }
 
         // Vehicle Occupancy Ext
         // Not implemented yet
         // the existing element (Vehicle-Occupancy) limits precision to 2 digits but can be used if precision reported is 4 digits
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Station Id
+        if(!isStationIdValid){
+            validOrNot=false;
+        }
+
+        // Detector Id
+        if(!isDetectorIdValid){
+            validOrNot=false;
+        }
+
+        // Detection Time Stamp
+        if(!isDetectionTimeStampValid){
+            validOrNot=false;
+        }
+
+        // Vehicle Count
+        if(!isVehicleCountValid){
+            validOrNot=false;
+        }
+
+        // Vehicle Occupancy
+        if(!isVehicleOccupancyValid){
+            validOrNot=false;
+        }
+
+        // Start Time
+        if(!isStartTimeValid){
+            validOrNot=false;
+        }
+
+        // End Time
+        if(!isEndTimeValid){
+            validOrNot=false;
+        }
+
+        // Detector Data Type
+        if(!isDetectorDataTypeValid){
+            validOrNot=false;
+        }
+
+        // Vehicle Speed
+        if(!isVehicleSpeedValid){
+            validOrNot=false;
+        }
+
+        // Queue Length
+        if(!isQueueLengthValid){
+            validOrNot=false;
+        }
+
+        // Vehicle Stops
+        if(!isVehicleStopsValid){
+            validOrNot=false;
+        }
+
+        // Detector Status
+        if(!isDetectorStatusValid){
+            validOrNot=false;
+        }
+
+        return validOrNot;
     }
 
 }

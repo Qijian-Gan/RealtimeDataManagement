@@ -4,11 +4,12 @@ import org.tmdd._303.messages.IntersectionSignalOverlapPhase;
 
 public class IntersectionSignalOverlapPhaseTestResult {
 
-    private boolean isOverlapIdentifierValid;
-    private boolean isOverlapIncludedPhasesExist;
+    private boolean isOverlapIdentifierValid; // Phase Id
+    private boolean isOverlapIncludedPhasesExist; // Included Phases
     private boolean isOverlapIncludedPhasesOutOfBound;
     private int maxOverlapIncludedPhases=8;
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isOverlapIdentifierValid() {
@@ -29,6 +30,10 @@ public class IntersectionSignalOverlapPhaseTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -52,12 +57,17 @@ public class IntersectionSignalOverlapPhaseTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         isOverlapIdentifierValid=true;
         isOverlapIncludedPhasesExist=true;
         isOverlapIncludedPhasesOutOfBound=false;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Check each element
@@ -80,11 +90,32 @@ public class IntersectionSignalOverlapPhaseTestResult {
                 errorMessages+="Empty overlap included phases;";
             }
 
-            if(intersectionSignalOverlapPhase.getOverlapIncludedPhases().getPhaseIdentifier().size()>maxOverlapIncludedPhases){
+            if(intersectionSignalOverlapPhase.getOverlapIncludedPhases().getPhaseIdentifier().size()
+                    >maxOverlapIncludedPhases){
                 isOverlapIncludedPhasesOutOfBound=true;
                 errorMessages+="Overlap included phases out of bound;";
             }
         }
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Overlap Identifier
+        if(!isOverlapIdentifierValid){
+            validOrNot=false;
+        }
+
+        // Overlap Included Phases
+        if(!isOverlapIncludedPhasesExist || isOverlapIncludedPhasesOutOfBound){
+            validOrNot=false;
+        }
+
+        return validOrNot;
     }
 
 }

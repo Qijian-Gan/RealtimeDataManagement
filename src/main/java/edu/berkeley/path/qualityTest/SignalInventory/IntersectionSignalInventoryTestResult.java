@@ -20,7 +20,7 @@ public class IntersectionSignalInventoryTestResult {
     // Phase List; Required by PATH
     private boolean isPhaseListExist;
     private boolean isPhaseListValid;
-    private int maxPhaseList=40;
+    private int maxPhaseList=40; // Defined by TMDD
     private boolean isPhaseListOutOfBound;
     private List<IntersectionSignalInventoryPhaseTestResult> intersectionSignalInventoryPhaseTestResultList;
     private List<Integer> errorMessagePhaseIndex;
@@ -28,7 +28,7 @@ public class IntersectionSignalInventoryTestResult {
     // Overlap Phase List; Required by PATH
     private boolean isOverlapPhaseListExist;
     private boolean isOverlapPhaseListValid;
-    private int maxOverlapPhaseList=16;
+    private int maxOverlapPhaseList=16; // Defined by TMDD
     private boolean isOverlapPhaseListOutOfBound;
     private List<IntersectionSignalOverlapPhaseTestResult> intersectionSignalOverlapPhaseTestResultList;
     private List<Integer> errorMessageOverlapPhaseIndex;
@@ -36,18 +36,19 @@ public class IntersectionSignalInventoryTestResult {
     // Ring List
     private boolean isRingListExist;
     private boolean isRingListValid;
-    private int maxRingList=16;
+    private int maxRingList=16; // Defined by TMDD
     private boolean isRingListOutOfBound;
     private List<IntersectionSignalRingTestResult> intersectionSignalRingTestResultList;
     private List<Integer> errorMessageRingIndex;
 
+    // Extensions
     private boolean isSignalControllerTypeValid; // Required by PATH
     private boolean isSignalControllerFirmwareValid; // Required by PATH
 
-    // Intersection signal inventory extension
-    private boolean isHubOrgIdValid;
-    private boolean isHubIntersectionSignalIdValid;
-    private boolean isDataValueCheckValid;
+    // Currently do not check Signal Inventory Ext
+    // The corresponding functions are not enabled
+    private boolean isSignalInventoryExtExist;
+    private boolean isSignalInventoryExtValid;
 
     private String errorMessages;
     private boolean validOrNot;
@@ -158,16 +159,12 @@ public class IntersectionSignalInventoryTestResult {
         return isSignalControllerFirmwareValid;
     }
 
-    public boolean isHubOrgIdValid() {
-        return isHubOrgIdValid;
+    public boolean isSignalInventoryExtExist() {
+        return isSignalInventoryExtExist;
     }
 
-    public boolean isHubIntersectionSignalIdValid() {
-        return isHubIntersectionSignalIdValid;
-    }
-
-    public boolean isDataValueCheckValid() {
-        return isDataValueCheckValid;
+    public boolean isSignalInventoryExtValid() {
+        return isSignalInventoryExtValid;
     }
 
     public String getErrorMessages() {
@@ -285,16 +282,12 @@ public class IntersectionSignalInventoryTestResult {
         isSignalControllerFirmwareValid = signalControllerFirmwareValid;
     }
 
-    public void setHubOrgIdValid(boolean hubOrgIdValid) {
-        isHubOrgIdValid = hubOrgIdValid;
+    public void setSignalInventoryExtExist(boolean signalInventoryExtExist) {
+        isSignalInventoryExtExist = signalInventoryExtExist;
     }
 
-    public void setHubIntersectionSignalIdValid(boolean hubIntersectionSignalIdValid) {
-        isHubIntersectionSignalIdValid = hubIntersectionSignalIdValid;
-    }
-
-    public void setDataValueCheckValid(boolean dataValueCheckValid) {
-        isDataValueCheckValid = dataValueCheckValid;
+    public void setSignalInventoryExtValid(boolean signalInventoryExtValid) {
+        isSignalInventoryExtValid = signalInventoryExtValid;
     }
 
     public void setErrorMessages(String errorMessages) {
@@ -332,9 +325,8 @@ public class IntersectionSignalInventoryTestResult {
         isSignalControllerTypeValid=true;
         isSignalControllerFirmwareValid=true;
 
-        isHubOrgIdValid=true;
-        isHubIntersectionSignalIdValid=true;
-        isDataValueCheckValid=true;
+        isSignalInventoryExtExist=true;
+        isSignalInventoryExtValid=true;
 
         errorMessages="";
         validOrNot=true;
@@ -350,7 +342,7 @@ public class IntersectionSignalInventoryTestResult {
         }else{
             deviceInventoryHeaderTestResult.Initialization();
             deviceInventoryHeaderTestResult.Check(intersectionSignalInventory.getDeviceInventoryHeader());
-            if(deviceInventoryHeaderTestResult.getErrorMessages()!=""){// Contain invalid information
+            if(!deviceInventoryHeaderTestResult.isValidOrNot()){// Contain invalid information
                 isDeviceInventoryHeaderValid=false;
                 errorMessages+="Device inventory header contains invalid information;";
             }
@@ -389,7 +381,7 @@ public class IntersectionSignalInventoryTestResult {
                     intersectionSignalInventoryPhaseTestResult.Initialization();
                     intersectionSignalInventoryPhaseTestResult.Check(intersectionSignalInventoryPhaseList.get(i));
                     intersectionSignalInventoryPhaseTestResultList.add(intersectionSignalInventoryPhaseTestResult);
-                    if(intersectionSignalInventoryPhaseTestResult.getErrorMessages()!=""){
+                    if(!intersectionSignalInventoryPhaseTestResult.isValidOrNot()){
                         errorMessagePhaseIndex.add(i);
                     }
                 }
@@ -420,7 +412,7 @@ public class IntersectionSignalInventoryTestResult {
                     intersectionSignalOverlapPhaseTestResult.Initialization();
                     intersectionSignalOverlapPhaseTestResult.Check(intersectionSignalOverlapPhaseList.get(i));
                     intersectionSignalOverlapPhaseTestResultList.add(intersectionSignalOverlapPhaseTestResult);
-                    if(intersectionSignalOverlapPhaseTestResult.getErrorMessages()!=""){
+                    if(!intersectionSignalOverlapPhaseTestResult.isValidOrNot()){
                         errorMessageOverlapPhaseIndex.add(i);
                     }
                 }
@@ -450,7 +442,7 @@ public class IntersectionSignalInventoryTestResult {
                     intersectionSignalRingTestResult.Initialization();
                     intersectionSignalRingTestResult.Check(intersectionSignalRingList.get(i));
                     intersectionSignalRingTestResultList.add(intersectionSignalRingTestResult);
-                    if(intersectionSignalRingTestResult.getErrorMessages()!=""){
+                    if(!intersectionSignalRingTestResult.isValidOrNot()){
                         errorMessageRingIndex.add(i);
                     }
                 }
@@ -476,11 +468,57 @@ public class IntersectionSignalInventoryTestResult {
         // Intersection Signal Inventory Extension
         // not implemented yet
 
-        // Evaluation
-        if(!isDeviceInventoryHeaderValid||!isIntersectionNameValid||!isControllerMasterIdValid||!isPhaseListValid||!isOverlapPhaseListValid
-                ||!isRingListValid || !isSignalControllerTypeValid || !isSignalControllerFirmwareValid){
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Device Inventory Header
+        if(!isDeviceInventoryHeaderExist ||!isDeviceInventoryHeaderValid){
             validOrNot=false;
         }
+
+        // Intersection Name
+        if(!isIntersectionNameValid){
+            validOrNot=false;
+        }
+
+        // Controller Master Id
+        if(!isControllerMasterIdValid){
+            validOrNot=false;
+        }
+
+        // Phase List
+        if(!isPhaseListExist || !isPhaseListValid || isPhaseListOutOfBound){
+            validOrNot=false;
+        }
+
+        // Overlap Phase List
+        if(!isOverlapPhaseListExist || !isOverlapPhaseListValid || isOverlapPhaseListOutOfBound){
+            validOrNot=false;
+        }
+
+        // Ring List
+        if(!isRingListExist || !isRingListValid || isRingListOutOfBound){
+            validOrNot=false;
+        }
+
+        // Signal Controller Type
+        if(!isSignalControllerTypeValid){
+            validOrNot=false;
+        }
+
+        // Signal Controller Firmware
+        if(!isSignalControllerFirmwareValid){
+            validOrNot=false;
+        }
+
+        // Currently do not check Signal Inventory Ext
+
+        return validOrNot;
     }
 
 }

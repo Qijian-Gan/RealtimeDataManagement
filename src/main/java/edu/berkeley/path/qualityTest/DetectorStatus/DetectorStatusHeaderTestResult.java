@@ -18,6 +18,7 @@ public class DetectorStatusHeaderTestResult {
     private boolean isResponseIdValid; // Required by PATH;
     private boolean isLastCommTimeValid; // Required by PATH; Structure: DateTimeZone
     private String errorMessages; // Store error messages
+    private boolean validOrNot;
 
     // Get functions
     public boolean isOrganizationInformationValid() {
@@ -58,6 +59,10 @@ public class DetectorStatusHeaderTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -101,6 +106,10 @@ public class DetectorStatusHeaderTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         isOrganizationInformationValid=true;
@@ -113,10 +122,12 @@ public class DetectorStatusHeaderTestResult {
         isResponseIdValid=true;
         isLastCommTimeValid=true;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Checking each element
     public void Check(DeviceStatusHeader deviceStatusHeader){
+
         // Organization ID
         if(deviceStatusHeader.getOrganizationInformation()==null){
             isOrganizationInformationValid=false;
@@ -184,5 +195,35 @@ public class DetectorStatusHeaderTestResult {
                 errorMessages+="Empty last comm time--time;";
             }
         }
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+
     }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Organization Information
+        if(!isOrganizationInformationValid){
+            validOrNot=false;
+        }
+
+        // Device Id
+        if(!isDeviceIdValid){
+            validOrNot=false;
+        }
+
+        // Device Status
+        if(!isDeviceCommStatusValid){
+            validOrNot=false;
+        }
+
+        // Currently do not check the following
+        // Center Id, Device Comm Status, Operator Id, Event Id, Response Plan Id, Last Comm Time
+
+        return validOrNot;
+    }
+
 }

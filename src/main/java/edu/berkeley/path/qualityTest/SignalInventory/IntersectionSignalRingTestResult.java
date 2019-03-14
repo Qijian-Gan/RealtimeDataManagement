@@ -4,11 +4,13 @@ import org.tmdd._303.messages.IntersectionSignalRing;
 
 public class IntersectionSignalRingTestResult {
 
-    private boolean isRingIdentifierValid;
-    private boolean isRingPhaseAssignmentExist;
+    private boolean isRingIdentifierValid; // Ring Id
+
+    private boolean isRingPhaseAssignmentExist; // Ring Assignment
     private boolean isRingPhaseAssignmentOutOfBound;
     private int maxRingPhaseAssignment=16;
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isRingIdentifierValid() {
@@ -29,6 +31,10 @@ public class IntersectionSignalRingTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -52,12 +58,17 @@ public class IntersectionSignalRingTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         isRingIdentifierValid=true;
         isRingPhaseAssignmentExist=true;
         isRingPhaseAssignmentOutOfBound=false;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Check each element
@@ -83,6 +94,26 @@ public class IntersectionSignalRingTestResult {
                 errorMessages+="Ring phase assignment out of bound;";
             }
         }
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Ring Id
+        if(!isRingIdentifierValid){
+            validOrNot=false;
+        }
+
+        // Ring Phase Assignment
+        if(!isRingPhaseAssignmentExist || isRingPhaseAssignmentOutOfBound){
+            validOrNot=false;
+        }
+
+        return validOrNot;
     }
 
 }

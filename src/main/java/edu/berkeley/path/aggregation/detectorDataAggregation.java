@@ -8,8 +8,8 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import edu.berkeley.path.objects.DetectorDataAggregated;
-import edu.berkeley.path.Configuration;
-import edu.berkeley.path.database.connect;
+import edu.berkeley.path.settings.Configuration;
+import edu.berkeley.path.database.MongoDB.connect;
 import org.bson.Document;
 import java.util.*;
 import static com.mongodb.client.model.Filters.*;
@@ -35,13 +35,6 @@ public class detectorDataAggregation {
             this.vehicleSpeed=_vehicleSpeed;
         }
     }
-
-    // Print Block
-    private static Block<Document> printBlock = new Block<Document>() {
-        public void apply(final Document document) {
-            System.out.println(document.toJson());
-        }
-    };
 
     public static List<Document> atGivenInterval(String collectionFrom,String collectionTo,final int interval) throws JsonProcessingException {
         // This function is used to aggregate raw traffic data in "collectionFrom" at the "interval" level
@@ -219,7 +212,7 @@ public class detectorDataAggregation {
         return detectorDataStructureList;
     }
 
-    public static List<DetectorDataAggregated> aggregateDataToDefinedInterval(Document key,List<DetectorDataStructure> detectorDataStructureList,
+    public static List<DetectorDataAggregated> aggregateDataToDefinedInterval(Document key,List<DetectorDataStructure> detectorDataStructureListIn,
                                                                               Date startTime,Date endTime, double interval){
         // Aggregate data to defined intervals
 
@@ -231,7 +224,8 @@ public class detectorDataAggregation {
 
         int NumInterval=(int) Math.floor((endTime.getTime()-startTime.getTime())/1000.0/interval);
 
-        if(detectorDataStructureList.size()!=0){
+        if(detectorDataStructureListIn.size()!=0){
+            List<DetectorDataStructure> detectorDataStructureList=getUniqueDetectorDataStructure(detectorDataStructureListIn);
             for(int i=0;i<NumInterval;i++){
                 long timeFrom=(long)(startTime.getTime()+i*interval*1000.0);
                 long timeTo=(long) (startTime.getTime()+(i+1)*interval*1000.0);
@@ -244,12 +238,13 @@ public class detectorDataAggregation {
                     long tmpTimeTo=Math.min(detectorDataStructureList.get(j).endTime.getTime(),timeTo);
                     if(tmpTimeTo>tmpTimeFrom){ // Within [timeFrom, timeTo]
                         deleteData.add(detectorDataStructureList.get(j));
+                        double deltaT=(tmpTimeTo-tmpTimeFrom)/1000.0;
                         // Weighted Hourly flow
-                        avgFlow=avgFlow+detectorDataStructureList.get(j).vehicleCount*detectorDataStructureList.get(j).duration/interval;
+                        avgFlow=avgFlow+detectorDataStructureList.get(j).vehicleCount*deltaT/interval;
                         // Weighted Occupancy
-                        avgOccupancy=avgOccupancy+detectorDataStructureList.get(j).vehicleOccupancy*detectorDataStructureList.get(j).duration/interval;
+                        avgOccupancy=avgOccupancy+detectorDataStructureList.get(j).vehicleOccupancy*deltaT/interval;
                         // Weighted Speed
-                        avgSpeed=avgSpeed+detectorDataStructureList.get(j).vehicleSpeed*detectorDataStructureList.get(j).duration/interval;
+                        avgSpeed=avgSpeed+detectorDataStructureList.get(j).vehicleSpeed*deltaT/interval;
                     }
                 }
                 if(deleteData.size()>0){
@@ -264,5 +259,18 @@ public class detectorDataAggregation {
     }
 
 
+    public static List<DetectorDataStructure> getUniqueDetectorDataStructure(List<DetectorDataStructure> input){
+
+        List<DetectorDataStructure> output=new ArrayList<>();
+        HashSet<String> uniqueStr=new HashSet<>();
+
+        for(int i=0;i<input.size();i++){
+            String str=input.get(i).startTime+"-"+input.get(i).endTime;
+            if(uniqueStr.add(str)){
+                output.add(input.get(i));
+            }
+        }
+        return output;
+    }
 
 }

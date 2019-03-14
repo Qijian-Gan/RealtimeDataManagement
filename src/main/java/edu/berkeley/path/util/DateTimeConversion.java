@@ -1,5 +1,6 @@
 package edu.berkeley.path.util;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,11 +14,11 @@ public class DateTimeConversion {
         int month=(tmddDateInteger%10000)/100;
         int day=(tmddDateInteger%100);
 
-        int tmddTimeInteger=Integer.parseInt(tmddTime);
-        int hour=(tmddTimeInteger/100000000);
-        int minute=(tmddTimeInteger%100000000)/1000000;
-        int second=(tmddTimeInteger%1000000)/10000;
-        int decimal=(tmddTimeInteger%10000)/10;
+        long tmddTimeInteger=Long.parseLong(tmddTime);
+        int hour=(int)(tmddTimeInteger/100000000);
+        int minute=(int)(tmddTimeInteger%100000000)/1000000;
+        int second=(int)(tmddTimeInteger%1000000)/10000;
+        int decimal=(int)(tmddTimeInteger%10000)/10;
 
         SimpleDateFormat formatter = new SimpleDateFormat( "MM-dd-yyyy HH:mm:ss.SSS");
 

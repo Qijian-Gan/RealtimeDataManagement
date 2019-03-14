@@ -16,8 +16,10 @@ public class DetectorInventoryDetailsTestResult {
     // Extension, not implemented yet!!
     private boolean isReportingSystemValid; // Required by PATH;
     private boolean isAB3418PresenceIndexValid; // Required by PATH; Integer (1...128)
+    private boolean isDetectorInventoryExtValid;
 
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isDetectorInventoryHeaderExist() {
@@ -48,8 +50,16 @@ public class DetectorInventoryDetailsTestResult {
         return isAB3418PresenceIndexValid;
     }
 
+    public boolean isDetectorInventoryExtValid() {
+        return isDetectorInventoryExtValid;
+    }
+
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -81,8 +91,16 @@ public class DetectorInventoryDetailsTestResult {
         isAB3418PresenceIndexValid = AB3418PresenceIndexValid;
     }
 
+    public void setDetectorInventoryExtValid(boolean detectorInventoryExtValid) {
+        isDetectorInventoryExtValid = detectorInventoryExtValid;
+    }
+
     public void setErrorMessages(String errorMessages) {
         this.errorMessages = errorMessages;
+    }
+
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
     }
 
     // Initialization
@@ -94,7 +112,9 @@ public class DetectorInventoryDetailsTestResult {
         isDetectorSpeedTrapFlagValid=true;
         isReportingSystemValid=true;
         isAB3418PresenceIndexValid=true;
+        isDetectorInventoryExtValid=true;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Check each element
@@ -109,8 +129,8 @@ public class DetectorInventoryDetailsTestResult {
             DetectorInventoryHeaderTestResult detectorInventoryHeaderTestResult=new DetectorInventoryHeaderTestResult();
             detectorInventoryHeaderTestResult.Initialization();
             detectorInventoryHeaderTestResult.Check(detectorInventoryDetails.getDetectorInventoryHeader());
-            if(detectorInventoryHeaderTestResult.getErrorMessages()!=""){
-                // Error message is not empty
+            if(!detectorInventoryHeaderTestResult.isValidOrNot()){
+                // Invalid
                 isDetectorInventoryHeaderValid=false;
                 errorMessages+="Detector inventory header invalid;";
             }
@@ -144,13 +164,40 @@ public class DetectorInventoryDetailsTestResult {
             errorMessages+="Empty detector speed trap flag;";
         }
 
-        // Reporting system
-        if(detectorInventoryDetails.getReportingSystem()==null){
-            isReportingSystemValid=false;
-            errorMessages+="Empty reporting system;";
+        // Currently do not check extended fields
+        // Reporting-System, Ab3418e-Presence-Index, Detector-Inventory-Ext
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Detector Inventory Header
+        if(!isDetectorInventoryHeaderExist || !isDetectorInventoryHeaderValid){
+            validOrNot=false;
         }
 
-        // AB3418PresenceIndex
-        // Not implemented yet!
+        // Detector Type
+        if(!isDetectorTypeValid){
+            validOrNot=false;
+        }
+
+        // Detector Lanes
+        if(!isDetectionLanesValid){
+            validOrNot=false;
+        }
+
+        // Detector Speed Trap Flag
+        if(!isDetectorSpeedTrapFlagValid){
+            validOrNot=false;
+        }
+
+        // Currently do not check extended fields
+        // Reporting-System, Ab3418e-Presence-Index, Detector-Inventory-Ext
+
+        return validOrNot;
     }
 }

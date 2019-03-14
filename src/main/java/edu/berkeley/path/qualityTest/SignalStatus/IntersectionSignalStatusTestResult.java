@@ -43,14 +43,17 @@ public class IntersectionSignalStatusTestResult {
     private boolean isActuationModeValid;
     private boolean isTimingPhasePlanModeValid;
 
+    // Cycle length
     private boolean isCycleLengthPlannedValid;
     private boolean isCycleLengthCurrentValid;
     private boolean isCycleLengthPreviousValid;
     private boolean isCycleLengthMasterValid;
 
+    // Cycle counter
     private boolean isCycleCounterValid;
     private boolean isCycleCounterMasterValid;
 
+    // Offset
     private boolean isOffsetReferenceValid;
     private boolean isOffsetTimePlannedValid;
     private boolean isOffsetTimeCurrentValid;
@@ -60,7 +63,7 @@ public class IntersectionSignalStatusTestResult {
 
     //IntersectionSignalPhaseSplit
     private boolean isPhaseSplitListExist;
-    private int maxPhaseSplitNumber=40;
+    private int maxPhaseSplitNumber=40; // Defined by TMDD
     private boolean isPhaseSplitListOutOfBound;
     private List<IntersectionSignalPhaseSplitTestResult> intersectionSignalPhaseSplitTestResultList;
     private List<Integer> errorMessagePhaseSplitIndex;
@@ -68,7 +71,7 @@ public class IntersectionSignalStatusTestResult {
 
     //IntersectionSignalRingStatus
     private boolean isRingStatusListExist;
-    private int maxRingStatusList=8;
+    private int maxRingStatusList=8; // Defined by TMDD
     private boolean isRingStatusListOutOfBound;
     private List<IntersectionSignalRingStatusTestResult> intersectionSignalRingStatusTestResultList;
     private boolean isRingStatusListValid;
@@ -76,7 +79,7 @@ public class IntersectionSignalStatusTestResult {
 
     //IntersectionSignalPhaseStatusGroup
     private boolean isPhaseStatusExist;
-    private int maxPhaseStatus=5;
+    private int maxPhaseStatus=5; // Defined by TMDD
     private boolean isPhaseStatusOutOfBound;
     private List<IntersectionSignalPhaseStatusGroupTestResult> intersectionSignalPhaseStatusGroupTestResultList;
     private boolean isPhaseStatusValid;
@@ -85,9 +88,9 @@ public class IntersectionSignalStatusTestResult {
     //// PATH extensions (currently do not check this part)
     private boolean isAB3418ControlExtValid;
     private boolean isOperationAgencyValid;
-    private boolean isMaintenenceAgencyValid;
-    private boolean isProhibitedRightOnRedValid;
-    private boolean isIntSigStatusValid;
+    private boolean isMaintenanceAgencyValid;
+    private boolean isOperationAlterationAuthorizationValid;
+    private boolean isIntSigStatusExtValid;
 
     private String errorMessages;
     private boolean validOrNot;
@@ -269,16 +272,16 @@ public class IntersectionSignalStatusTestResult {
         return isOperationAgencyValid;
     }
 
-    public boolean isMaintenenceAgencyValid() {
-        return isMaintenenceAgencyValid;
+    public boolean isMaintenanceAgencyValid() {
+        return isMaintenanceAgencyValid;
     }
 
-    public boolean isProhibitedRightOnRedValid() {
-        return isProhibitedRightOnRedValid;
+    public boolean isOperationAlterationAuthorizationValid() {
+        return isOperationAlterationAuthorizationValid;
     }
 
-    public boolean isIntSigStatusValid() {
-        return isIntSigStatusValid;
+    public boolean isIntSigStatusExtValid() {
+        return isIntSigStatusExtValid;
     }
 
     // Error messages
@@ -468,16 +471,16 @@ public class IntersectionSignalStatusTestResult {
         isOperationAgencyValid = operationAgencyValid;
     }
 
-    public void setMaintenenceAgencyValid(boolean maintenenceAgencyValid) {
-        isMaintenenceAgencyValid = maintenenceAgencyValid;
+    public void setMaintenanceAgencyValid(boolean maintenanceAgencyValid) {
+        isMaintenanceAgencyValid = maintenanceAgencyValid;
     }
 
-    public void setProhibitedRightOnRedValid(boolean prohibitedRightOnRedValid) {
-        isProhibitedRightOnRedValid = prohibitedRightOnRedValid;
+    public void setOperationAlterationAuthorizationValid(boolean operationAlterationAuthorizationValid) {
+        isOperationAlterationAuthorizationValid = operationAlterationAuthorizationValid;
     }
 
-    public void setIntSigStatusValid(boolean intSigStatusValid) {
-        isIntSigStatusValid = intSigStatusValid;
+    public void setIntSigStatusExtValid(boolean intSigStatusExtValid) {
+        isIntSigStatusExtValid = intSigStatusExtValid;
     }
 
     // Error messages
@@ -493,7 +496,7 @@ public class IntersectionSignalStatusTestResult {
     public void Initialization(){
         isDeviceStatusHeaderExist=true;
         isDeviceStatusHeaderValid=true;
-        deviceStatusHeaderTestResult=null;
+        deviceStatusHeaderTestResult=new DeviceStatusHeaderTestResult();
 
         isSignalControlSourceValid=true;
         isPlannedSignalTimingModeValid=true;
@@ -543,9 +546,9 @@ public class IntersectionSignalStatusTestResult {
         //// PATH extensions (currently do not check this part)
         isAB3418ControlExtValid=true;
         isOperationAgencyValid=true;
-        isMaintenenceAgencyValid=true;
-        isProhibitedRightOnRedValid=true;
-        isIntSigStatusValid=true;
+        isMaintenanceAgencyValid=true;
+        isOperationAlterationAuthorizationValid=true;
+        isIntSigStatusExtValid=true;
 
         errorMessages="";
         validOrNot=true;
@@ -561,7 +564,7 @@ public class IntersectionSignalStatusTestResult {
         }else{
             deviceStatusHeaderTestResult.Initialization();
             deviceStatusHeaderTestResult.Check(intersectionSignalStatus.getDeviceStatusHeader());
-            if(deviceStatusHeaderTestResult.getErrorMessages()!=""){
+            if(!deviceStatusHeaderTestResult.isValidOrNot()){
                 errorMessages+="Device status header is invalid;";
                 isDeviceStatusHeaderValid=false;
             }
@@ -709,7 +712,7 @@ public class IntersectionSignalStatusTestResult {
                     intersectionSignalPhaseSplitTestResult.Initialization();
                     intersectionSignalPhaseSplitTestResult.Check(intersectionSignalPhaseSplitList.get(i));
                     intersectionSignalPhaseSplitTestResultList.add(intersectionSignalPhaseSplitTestResult);
-                    if(intersectionSignalPhaseSplitTestResult.getErrorMassages()!=""){
+                    if(!intersectionSignalPhaseSplitTestResult.isValidOrNot()){
                         errorMessagePhaseSplitIndex.add(i);
                     }
                 }
@@ -742,7 +745,7 @@ public class IntersectionSignalStatusTestResult {
                     intersectionSignalRingStatusTestResult.Initialization();
                     intersectionSignalRingStatusTestResult.Check(intersectionSignalRingStatusList.get(i));
                     intersectionSignalRingStatusTestResultList.add(intersectionSignalRingStatusTestResult);
-                    if(intersectionSignalRingStatusTestResult.getErrorMessages()!=""){
+                    if(!intersectionSignalRingStatusTestResult.isValidOrNot()){
                         errorMessageRingStatusIndex.add(i);
                     }
                 }
@@ -770,13 +773,13 @@ public class IntersectionSignalStatusTestResult {
                     errorMessages+="Phase status is out of bound;";
                     isPhaseStatusOutOfBound=true;
                 }
-
+                // Loop for each element
                 for(int i=0;i<intersectionSignalPhaseStatusGroupList.size();i++){
                     IntersectionSignalPhaseStatusGroupTestResult intersectionSignalPhaseStatusGroupTestResult=
                             new IntersectionSignalPhaseStatusGroupTestResult();
                     intersectionSignalPhaseStatusGroupTestResult.Initialization();
                     intersectionSignalPhaseStatusGroupTestResult.Check(intersectionSignalPhaseStatusGroupList.get(i));
-                    if(intersectionSignalPhaseStatusGroupTestResult.getErrorMessages()!=""){
+                    if(!intersectionSignalPhaseStatusGroupTestResult.isValidOrNot()){
                         errorMessagePhaseStatusIndex.add(i);
                     }
                     intersectionSignalPhaseStatusGroupTestResultList.add(intersectionSignalPhaseStatusGroupTestResult);
@@ -789,9 +792,103 @@ public class IntersectionSignalStatusTestResult {
             }
         }
 
-        if(errorMessages!=""){// When error message (related to required fields) is not empty!
+        // Currently do not check for the extensions
+        // Ab3418e-Controller, operation-agency, maintenance-agency, operation-alteration-authorization, signal-status-ext
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        //**********************************
+        // Note note all attributes are checked
+        // Users can define their own ones
+        //**********************************
+
+        boolean validOrNot=true;
+
+        // Device Status Header
+        if(!isDeviceStatusHeaderExist ||!isDeviceStatusHeaderValid){
             validOrNot=false;
         }
+
+        // Signal Control Source
+        if(!isSignalControlSourceValid){
+            validOrNot=false;
+        }
+
+        // Planned Signal Timing Mode
+        if(!isPlannedSignalTimingModeValid){
+            validOrNot=false;
+        }
+
+        // Current Signal Timing Mode
+        if(!isCurrentSignalTimingModeValid){
+            validOrNot=false;
+        }
+
+        // Timing Pattern Id Current
+        if(!isTimingPatternIdCurrentValid){
+            validOrNot=false;
+        }
+
+        // Timing Pattern Description
+        if(!isTimingPatternDescriptionValid){
+            validOrNot=false;
+        }
+
+        // Actuation Mode
+        if(!isActuationModeValid){
+            validOrNot=false;
+        }
+
+        // Timing Phase Plan Mode
+        if(!isTimingPhasePlanModeValid){
+            validOrNot=false;
+        }
+
+        // Do not check Cycle Length
+
+        // Cycle Counter
+        if(!isCycleCounterValid){
+            validOrNot=false;
+        }
+
+        // Cycle Counter Master
+        if(!isCycleCounterMasterValid){
+            validOrNot=false;
+        }
+
+        // Offset Reference
+        if(!isOffsetReferenceValid){
+            validOrNot=false;
+        }
+
+        // Controller Timestamp
+        if(!isControllerTimestampValid){
+            validOrNot=false;
+        }
+
+        // Phase Split List
+        // This field may not be available if it is updated by every light change
+
+        // Ring Status List
+        if(!isRingStatusListExist || !isRingStatusListValid || isRingStatusListOutOfBound){
+            validOrNot=false;
+        }
+
+        // Phase Status
+        if(!isPhaseStatusExist || !isPhaseStatusValid || isPhaseStatusOutOfBound){
+            validOrNot=false;
+        }
+
+        // Currently do not check the following extensions
+        // ab3418e-controller, operation-agency, maintenance-agency,
+        // operation-alteration-authorization, signal-status-ext
+
+        return validOrNot;
     }
+
 
 }

@@ -9,13 +9,14 @@ public class IntersectionSignalPhaseStatusGroupTestResult {
 
     private boolean isPhaseStatusGroupYellowsValid; // Required when applicable
     private boolean isPhaseStatusGroupRedsValid; // Required when applicable
-    private boolean isPhaseStatusGroupRightOnRedProhibValid;// Required when applicable
+    private boolean isPhaseStatusGroupRightOnRedProhibValid;// Required when applicable, extension
 
     private boolean isPhaseStatusGroupWalksValid; // Not required
     private boolean isPhaseStatusGroupPedclearsValid; // Not required
     private boolean isPhaseStatusGroupDontwalksValid; // Not required
 
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isPhaseStatusGroupNumberValid() {
@@ -52,6 +53,10 @@ public class IntersectionSignalPhaseStatusGroupTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -91,6 +96,10 @@ public class IntersectionSignalPhaseStatusGroupTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         isPhaseStatusGroupNumberValid=true;
@@ -102,6 +111,7 @@ public class IntersectionSignalPhaseStatusGroupTestResult {
         isPhaseStatusGroupPedclearsValid=true;
         isPhaseStatusGroupDontwalksValid=true;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Check each element
@@ -135,12 +145,55 @@ public class IntersectionSignalPhaseStatusGroupTestResult {
             errorMessages+="Phase status group reds is out of bound;";
         }
 
-        // Phase Status Group Right On Red Prohib
-        if(intersectionSignalPhaseStatusGroup.getPhaseStatusGroupRightOnRedProhib()<0||
-        intersectionSignalPhaseStatusGroup.getPhaseStatusGroupRightOnRedProhib()>255){
+        // Phase Status Group Right On Red Prohib: extension, not available in TMDD documents
+        if(intersectionSignalPhaseStatusGroup.getPhaseStatusGroupRightOnRedProhib()==null){
             isPhaseStatusGroupRightOnRedProhibValid=false;
-            errorMessages+="Phase status group right on red prohib is out of bound;";
+            errorMessages+="Phase status group right on red prohib is empty;";
+        }else {
+            if (intersectionSignalPhaseStatusGroup.getPhaseStatusGroupRightOnRedProhib() < 0 ||
+                    intersectionSignalPhaseStatusGroup.getPhaseStatusGroupRightOnRedProhib() > 255) {
+                isPhaseStatusGroupRightOnRedProhibValid = false;
+                errorMessages += "Phase status group right on red prohib is out of bound;";
+            }
         }
+
+        // Do not check the following attributes
+        // Phase-Status-Group-Walks, Phase-Status-Group-Pedclears, Phase-Status-Group-Dontwalks
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+
+    }
+
+    // Assessment
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Group Number: Required
+        if(!isPhaseStatusGroupNumberValid){
+            validOrNot=false;
+        }
+
+        // Greens: Required
+        if(!isPhaseStatusGroupGreensValid){
+            validOrNot=false;
+        }
+
+        // Yellows: Required when applicable
+        if(!isPhaseStatusGroupYellowsValid){
+            validOrNot=false;
+        }
+
+        // Reds: Required when applicable
+        if(!isPhaseStatusGroupRedsValid){
+            validOrNot=false;
+        }
+
+        // Phase status group right on red prohib: Extension; Required when applicable
+        // Currently do not check this field
+
+        return validOrNot;
     }
 
 }

@@ -7,6 +7,7 @@ public class IntersectionSignalRingStatusTestResult {
     private boolean isRingIdentifierValid;
     private boolean isRingStatusValid;
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isRingIdentifierValid() {
@@ -19,6 +20,10 @@ public class IntersectionSignalRingStatusTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -34,11 +39,16 @@ public class IntersectionSignalRingStatusTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         this.isRingIdentifierValid=true;
         this.isRingStatusValid=true;
         this.errorMessages="";
+        this.validOrNot=true;
     }
 
     // Checking each element
@@ -53,6 +63,26 @@ public class IntersectionSignalRingStatusTestResult {
             isRingStatusValid=false;
             errorMessages+="Ring status out of bound;";
         }
+
+        validOrNot=assessmentValidOrNot();
+    }
+
+    // Assessment
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Ring Id: Required
+        if(!isRingIdentifierValid){
+            validOrNot=false;
+        }
+
+        // Ring Status: Required
+        if(!isRingStatusValid){
+            validOrNot=false;
+        }
+
+        return validOrNot;
     }
 
 }

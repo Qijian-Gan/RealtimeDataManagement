@@ -19,40 +19,36 @@
  * PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
  * UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
-package edu.berkeley.path;
 
-import org.apache.activemq.ActiveMQPrefetchPolicy;
-import org.apache.activemq.spring.ActiveMQConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+package edu.berkeley.path.mainFunctions;
 
-@Configuration
-public class ActiveMQHubConfig {
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.io.IoBuilder;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+public class Application {
 
-    private String activeMQBrokerUrl ="tcp://10.207.136.80:61616";
+    private static final Logger LOG = LogManager.getLogger(Application.class);
 
-    @Autowired
-    ActiveMQPrefetchPolicy prefetchPolicyHub;
+    public static AbstractApplicationContext springCtx;
 
+    public static final void main(String[] args) throws Exception {
 
-    @Bean
-    public ActiveMQConnectionFactory activeMQHubConnectionFactory() {
-        ActiveMQConnectionFactory amqCF = new ActiveMQConnectionFactory();
+        //Capture all outputStream logs
+        System.setErr(IoBuilder.forLogger(LogManager.getRootLogger()).setLevel(Level.ERROR).buildPrintStream());
+        System.setOut(IoBuilder.forLogger(LogManager.getRootLogger()).setLevel(Level.INFO).buildPrintStream());
 
-
-        amqCF.setBrokerURL("tcp://10.207.136.80:61616");
-
-        amqCF.setUseCompression(true);
-        amqCF.setUseAsyncSend(true);
-        amqCF.setOptimizeAcknowledge(true);
-        amqCF.setAlwaysSessionAsync(false);
-        amqCF.setPrefetchPolicy(prefetchPolicyHub);
-        amqCF.setTrustAllPackages(true);
-
-        return amqCF;
+        try {
+            springCtx = new ClassPathXmlApplicationContext("spring-context.xml");
+            springCtx.start();
+            LOG.info("Starting application....");
+        } catch (Throwable e) {
+            LOG.error("Exception caught in Main method " + e.getMessage());
+        }
     }
 
 }
+

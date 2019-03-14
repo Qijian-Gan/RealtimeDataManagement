@@ -7,6 +7,7 @@ public class IntersectionSignalPhaseSplitTestResult {
     private boolean isPhaseIdentifierValid;
     private boolean isPhaseDurationValid;
     private String errorMassages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isPhaseIdentifierValid() {
@@ -19,6 +20,10 @@ public class IntersectionSignalPhaseSplitTestResult {
 
     public String getErrorMassages() {
         return errorMassages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -34,11 +39,16 @@ public class IntersectionSignalPhaseSplitTestResult {
         this.errorMassages = errorMassages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         this.isPhaseIdentifierValid=true;
         this.isPhaseDurationValid=true;
         this.errorMassages="";
+        this.validOrNot=true;
     }
 
     // Check
@@ -53,6 +63,26 @@ public class IntersectionSignalPhaseSplitTestResult {
             isPhaseDurationValid=false;
             errorMassages+="Phase duration out of bound;";
         }
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Phase Id: Required
+        if(!isPhaseIdentifierValid){
+            validOrNot=false;
+        }
+
+        // Phase Duration: Required
+        if(!isPhaseDurationValid){
+            validOrNot=false;
+        }
+
+        return validOrNot;
     }
 
 }

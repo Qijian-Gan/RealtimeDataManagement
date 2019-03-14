@@ -22,11 +22,6 @@ public class DetectorInventoryTestResult {
     private List<DetectorInventoryDetailsTestResult> detectorInventoryDetailsTestResultList;
     private List<Integer> errorMessageIndex;
 
-    // Detector Inventory Extension
-    private boolean isHubOrgIdValidValid; // Required by PATH; Big Int
-    private boolean isHubDetectorIdValid; // Required by PATH; Big Int
-    private boolean isDataValueCheckValid; // Required by PATH; Enumerated: pass(1),fail(2)
-
     private String errorMessages;
     private boolean validOrNot;
 
@@ -61,18 +56,6 @@ public class DetectorInventoryTestResult {
 
     public List<Integer> getErrorMessageIndex() {
         return errorMessageIndex;
-    }
-
-    public boolean isHubOrgIdValidValid() {
-        return isHubOrgIdValidValid;
-    }
-
-    public boolean isHubDetectorIdValid() {
-        return isHubDetectorIdValid;
-    }
-
-    public boolean isDataValueCheckValid() {
-        return isDataValueCheckValid;
     }
 
     public boolean isValidOrNot() {
@@ -116,18 +99,6 @@ public class DetectorInventoryTestResult {
         this.errorMessageIndex = errorMessageIndex;
     }
 
-    public void setHubOrgIdValidValid(boolean hubOrgIdValidValid) {
-        isHubOrgIdValidValid = hubOrgIdValidValid;
-    }
-
-    public void setHubDetectorIdValid(boolean hubDetectorIdValid) {
-        isHubDetectorIdValid = hubDetectorIdValid;
-    }
-
-    public void setDataValueCheckValid(boolean dataValueCheckValid) {
-        isDataValueCheckValid = dataValueCheckValid;
-    }
-
     public void setValidOrNot(boolean validOrNot) {
         this.validOrNot = validOrNot;
     }
@@ -140,15 +111,12 @@ public class DetectorInventoryTestResult {
     public void Initialization(){
         isDetectorStationInventoryHeaderValid=true;
         isDetectorStationInventoryHeaderExist=true;
-        detectorStationInventoryHeaderTestResult=new DetectorStationInventoryHeaderTestResult();
+        detectorStationInventoryHeaderTestResult=null;
         isDetectorInventoryListExist=true;
         isDetectorInventoryListValid=true;
         isDetectorInventoryListOutOfBound=false;
         detectorInventoryDetailsTestResultList=new ArrayList<DetectorInventoryDetailsTestResult>();
         errorMessageIndex=new ArrayList<Integer>();
-        isHubOrgIdValidValid=true;
-        isHubDetectorIdValid=true;
-        isDataValueCheckValid=true;
         errorMessages="";
         validOrNot=true;
     }
@@ -159,12 +127,12 @@ public class DetectorInventoryTestResult {
         // Detector Station Inventory Header
         if(detectorInventory.getDetectorStationInventoryHeader()==null){
             isDetectorStationInventoryHeaderExist=false;
-            isDetectorStationInventoryHeaderValid=false;
             errorMessages+="Empty detector station inventory header;";
         }else{
+            detectorStationInventoryHeaderTestResult=new DetectorStationInventoryHeaderTestResult();
             detectorStationInventoryHeaderTestResult.Initialization();
             detectorStationInventoryHeaderTestResult.Check(detectorInventory.getDetectorStationInventoryHeader());
-            if(detectorStationInventoryHeaderTestResult.getErrorMessesages()!=""){//Not empty
+            if(!detectorStationInventoryHeaderTestResult.isValidOrNot()){//Invalid
                 isDetectorStationInventoryHeaderValid=false;
                 errorMessages+="Detector station inventory header invalid;";
             }
@@ -173,7 +141,6 @@ public class DetectorInventoryTestResult {
         // Detector Inventory List
         if(detectorInventory.getDetectorInventoryList()==null){
             isDetectorInventoryListExist=false;
-            isDetectorInventoryListValid=false;
             errorMessages+="Empty detector inventory list;";
         }else{
             List<DetectorInventoryDetails> detectorInventoryDetailsList=detectorInventory.getDetectorInventoryList().getDetector();
@@ -183,7 +150,6 @@ public class DetectorInventoryTestResult {
             }
             if(detectorInventoryDetailsList.size()==0){
                 isDetectorInventoryListExist=false;
-                isDetectorInventoryListValid=false;
                 errorMessages+="Empty detector inventory list";
             }
             for(int i=0;i<detectorInventoryDetailsList.size();i++){
@@ -191,7 +157,7 @@ public class DetectorInventoryTestResult {
                 detectorInventoryDetailsTestResult.Initialization();
                 detectorInventoryDetailsTestResult.Check(detectorInventoryDetailsList.get(i));
                 detectorInventoryDetailsTestResultList.add(detectorInventoryDetailsTestResult);
-                if(detectorInventoryDetailsTestResult.getErrorMessages()!=""){
+                if(!detectorInventoryDetailsTestResult.isValidOrNot()){
                     errorMessageIndex.add(i); // Add the index that returns error messages
                 }
             }
@@ -201,15 +167,24 @@ public class DetectorInventoryTestResult {
             }
         }
 
-        // Check detector inventory extension: data hub related
-        // hub-org-id, hub-detector-id, data-value-check
-        // Not implemented yet!!
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
 
-        // Check Valid or not
-        if(!isDetectorInventoryListValid || !isDetectorInventoryListExist ||
-                !isDetectorStationInventoryHeaderExist ||!isDetectorStationInventoryHeaderValid){
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Detector Station Inventory Header
+        if(!isDetectorStationInventoryHeaderExist || !isDetectorStationInventoryHeaderValid){
             validOrNot=false;
         }
 
+        // Detector Inventory List
+        if(!isDetectorInventoryListExist || !isDetectorInventoryListValid || isDetectorInventoryListOutOfBound){
+            validOrNot=false;
+        }
+
+        return validOrNot;
     }
 }

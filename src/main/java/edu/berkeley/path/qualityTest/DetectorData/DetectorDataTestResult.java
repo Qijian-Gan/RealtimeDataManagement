@@ -1,6 +1,5 @@
 package edu.berkeley.path.qualityTest.DetectorData;
 
-import edu.berkeley.path.qualityTest.DetectorInventory.DetectorInventoryDetailsTestResult;
 import org.tmdd._303.messages.DetectorData;
 import org.tmdd._303.messages.DetectorDataDetail;
 
@@ -8,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 public class DetectorDataTestResult {
 
+    // Organization Information
     private boolean isOrganizationInformationValid;
 
+    // Detector Data List
     private boolean isDetectorDataListExist;
     private boolean isDetectorDataListValid;
     private int maxDetectorDataList=65535;
@@ -17,13 +18,8 @@ public class DetectorDataTestResult {
     private List<DetectorDataDetailTestResult> detectorDataDetailTestResultList;
     private List<Integer> errorMessageIndex;
 
-    // Detector data ext
-    private boolean isHubOrgIdValid; // BigInt
-    private boolean isHubSensorIdValid; //BigInt
-    private boolean isInventoryCheckValid; // Enumerated: pass(1),fail:in inventory but missing data(2), fail:not in inventory (3)
-    private boolean isFlowBalanceCheckValid;
-    // flow-balance-test-id (big int) & flow-balance-result (enumerated: pass(1),fail(2))
-    private boolean isDataValueCheckValid; // Enumerated: pass(1), fail(2)
+    // Detector Data Ext
+    private boolean isDetectorDataExtValid;
 
     private String errorMessages;
     private boolean validOrNot;
@@ -55,24 +51,12 @@ public class DetectorDataTestResult {
         return errorMessageIndex;
     }
 
-    public boolean isHubOrgIdValid() {
-        return isHubOrgIdValid;
+    public int getMaxDetectorDataList() {
+        return maxDetectorDataList;
     }
 
-    public boolean isHubSensorIdValid() {
-        return isHubSensorIdValid;
-    }
-
-    public boolean isInventoryCheckValid() {
-        return isInventoryCheckValid;
-    }
-
-    public boolean isFlowBalanceCheckValid() {
-        return isFlowBalanceCheckValid;
-    }
-
-    public boolean isDataValueCheckValid() {
-        return isDataValueCheckValid;
+    public boolean isDetectorDataExtValid() {
+        return isDetectorDataExtValid;
     }
 
     public String getErrorMessages() {
@@ -110,24 +94,20 @@ public class DetectorDataTestResult {
         this.errorMessageIndex = errorMessageIndex;
     }
 
-    public void setHubOrgIdValid(boolean hubOrgIdValid) {
-        isHubOrgIdValid = hubOrgIdValid;
+    public void setDetectorDataExtValid(boolean detectorDataExtValid) {
+        isDetectorDataExtValid = detectorDataExtValid;
     }
 
-    public void setHubSensorIdValid(boolean hubSensorIdValid) {
-        isHubSensorIdValid = hubSensorIdValid;
+    public void setMaxDetectorDataList(int maxDetectorDataList) {
+        this.maxDetectorDataList = maxDetectorDataList;
     }
 
-    public void setInventoryCheckValid(boolean inventoryCheckValid) {
-        isInventoryCheckValid = inventoryCheckValid;
+    public void setErrorMessages(String errorMessages) {
+        this.errorMessages = errorMessages;
     }
 
-    public void setFlowBalanceCheckValid(boolean flowBalanceCheckValid) {
-        isFlowBalanceCheckValid = flowBalanceCheckValid;
-    }
-
-    public void setDataValueCheckValid(boolean dataValueCheckValid) {
-        isDataValueCheckValid = dataValueCheckValid;
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
     }
 
     //****************************************************************************************
@@ -140,11 +120,7 @@ public class DetectorDataTestResult {
         isDetectorDataListOutOfBound=false;
         detectorDataDetailTestResultList=new ArrayList<DetectorDataDetailTestResult>();
         errorMessageIndex=new ArrayList<Integer>();
-        isHubOrgIdValid=true;
-        isHubSensorIdValid=true;
-        isInventoryCheckValid=true;
-        isFlowBalanceCheckValid=true;
-        isDataValueCheckValid=true;
+        isDetectorDataExtValid=true;
         errorMessages="";
         validOrNot=true;
     }
@@ -186,7 +162,7 @@ public class DetectorDataTestResult {
                     detectorDataDetailTestResult.Initialization();
                     detectorDataDetailTestResult.Check(detectorDataDetailList.get(i));
                     detectorDataDetailTestResultList.add(detectorDataDetailTestResult);
-                    if(detectorDataDetailTestResult.getErrorMessages()!=""){// Not empty error messages
+                    if(!detectorDataDetailTestResult.isValidOrNot()){// Not empty error messages
                         errorMessageIndex.add(i);
                     }
                 }
@@ -201,9 +177,28 @@ public class DetectorDataTestResult {
         // isHubOrgIdValid; isHubSensorIdValid; isInventoryCheckValid;  isFlowBalanceCheckValid;
         // flow-balance-test-id (big int); isDataValueCheckValid;
 
-        if(errorMessages!=""){ // Contain error messages
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        // Organization Information
+        if(!isOrganizationInformationValid){
             validOrNot=false;
         }
+
+        // Detector Data List
+        if(!isDetectorDataListExist || !isDetectorDataListValid ||isDetectorDataListOutOfBound){
+            validOrNot=false;
+        }
+
+        // Detector Data Ext
+        // Currently do not check this field
+
+        return validOrNot;
     }
 
 }
