@@ -21,12 +21,14 @@ public class Configuration {
     public static String outputDetectorInventoryLocation="\\data\\detectorInventory";
     public static String collectionDetectorInventory="detectorInventory";
     public static String collectionDetectorInventoryWithTestResult="detectorInventoryWithTestResult";
+    public static String collectionDetectorInventoryIndividual="detectorInventoryIndividual";
 
     // Detector status
     public static String intersectionDetectorStatus = "Consumer.research.VirtualTopic.CT.D7.DSS.DataOrdered.IntersectionDetectorStatus";
     public static String outputDetectorStatusLocation="\\data\\detectorStatus";
     public static String collectionDetectorStatus="detectorStatus";
     public static String collectionDetectorStatusWithTestResult="detectorStatusWithTestResult";
+    public static String collectionDetectorStatusIndividual="detectorStatusIndividual";
 
     // Detector data
     public static String intersectionDetectorData = "Consumer.research.VirtualTopic.CT.D7.DSS.DataOrdered.IntersectionDetectorData";

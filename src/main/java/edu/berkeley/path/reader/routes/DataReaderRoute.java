@@ -3,6 +3,8 @@ package edu.berkeley.path.reader.routes;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.berkeley.path.qualityTest.DetectorData.DetectorDataTestResult;
+import edu.berkeley.path.qualityTest.DetectorInventory.DetectorInventoryTestResult;
+import edu.berkeley.path.qualityTest.DetectorStatus.DetectorStatusTestResult;
 import edu.berkeley.path.qualityTest.SignalInventory.IntersectionSignalInventoryTestResult;
 import edu.berkeley.path.qualityTest.SignalStatus.IntersectionSignalStatusTestResult;
 import edu.berkeley.path.settings.Configuration;
@@ -80,7 +82,8 @@ public class DataReaderRoute extends RouteBuilder {
                             documentWithTestResult);
 
                     // Construct individual detector data and save it to MongoDB
-                    List<DetectorDataIndividual> detectorDataIndividualList=DetectorDataIndividual.constructIndividualDetectorData(detectorData);
+                    List<DetectorDataIndividual> detectorDataIndividualList=DetectorDataIndividual.
+                            constructIndividualDetectorData(detectorData);
                     if(detectorDataIndividualList.size()>0){
                         List<Document> documentList=new ArrayList<Document>();
                         for(int i=0;i<detectorDataIndividualList.size();i++){
@@ -88,7 +91,8 @@ public class DataReaderRoute extends RouteBuilder {
                             Document documentDetectorDataIndividual=Document.parse(detectorDataIndividual);
                             documentList.add(documentDetectorDataIndividual);
                         }
-                        save.insertMultipleToMongodbCollection(Configuration.database,Configuration.collectionDetectorDataIndividual,documentList);
+                        save.insertMultipleToMongodbCollection(Configuration.database,Configuration.
+                                collectionDetectorDataIndividual,documentList);
                     }
                 }
             });
@@ -113,22 +117,33 @@ public class DataReaderRoute extends RouteBuilder {
                         Document document=Document.parse(body);
                         save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionDetectorInventory,document);
 
-
                         // Serialize the message
-                        /*
                         DetectorInventory detectorInventory = (DetectorInventory) JsonUtil.serializer().fromJson(body, new TypeReference<DetectorInventory>() {}) ;
                         DetectorInventoryTestResult detectorInventoryTestResult=new DetectorInventoryTestResult();
                         detectorInventoryTestResult.Initialization();
                         detectorInventoryTestResult.Check(detectorInventory);
-
 
                         // Construct a new data type with test results and save it to mongo
                         DetectorInventoryWithTestResult detectorInventoryWithTestResult=
                                 new DetectorInventoryWithTestResult(detectorInventory,detectorInventoryTestResult);
                         String detectorInventoryWithTestResultInString =mapper.writeValueAsString(detectorInventoryWithTestResult);
                         Document documentWithTestResult=Document.parse(detectorInventoryWithTestResultInString);
-                        save.insertOneToMongodbCollection(mongodbName,collectionDetectorInventoryWithTestResult,documentWithTestResult);
-*/
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionDetectorInventoryWithTestResult
+                                ,documentWithTestResult);
+
+                        // Construct individual detector inventory and save it to MongoDB
+                        List<DetectorInventoryIndividual> detectorInventoryIndividualList=DetectorInventoryIndividual.
+                                constructIndividualDetectorInventory(detectorInventory);
+                        if(detectorInventoryIndividualList.size()>0){
+                            List<Document> documentList=new ArrayList<Document>();
+                            for(int i=0;i<detectorInventoryIndividualList.size();i++){
+                                String detectorInventoryIndividual =mapper.writeValueAsString(detectorInventoryIndividualList.get(i));
+                                Document documentDetectorInventoryIndividual=Document.parse(detectorInventoryIndividual);
+                                documentList.add(documentDetectorInventoryIndividual);
+                            }
+                            save.insertMultipleToMongodbCollection(Configuration.database,
+                                    Configuration.collectionDetectorInventoryIndividual,documentList);
+                        }
                     }
                 });
 
@@ -141,30 +156,44 @@ public class DataReaderRoute extends RouteBuilder {
 
                         logger.info("Reading detector status from data-gateway ...");
                         String body = (String) exchange.getIn().getBody();
-                        // Save original document to mongodb
-                        Document document=Document.parse(body);
-                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionDetectorStatus,document);
+                        ObjectMapper mapper = new ObjectMapper(); // Write to string
 
                         // Save the file locally
                         Date date = new Date();
                         String fileName=Constants.Construct_A_File_Name(Configuration.outputDetectorStatusLocation,dateFormat.format(date),"Append");
                         producerTemplate.sendBody(fileName, body);
 
+                        // Save original document to mongodb
+                        Document document=Document.parse(body);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionDetectorStatus,document);
+
                         // Serialize the message
-                        /*
                         DetectorStatus detectorStatus = (DetectorStatus) JsonUtil.serializer().fromJson(body, new TypeReference<DetectorStatus>() {}) ;
                         DetectorStatusTestResult detectorStatusTestResult=new DetectorStatusTestResult();
                         detectorStatusTestResult.Initialization();
                         detectorStatusTestResult.Check(detectorStatus);
 
-                        ObjectMapper mapper = new ObjectMapper(); // Write to string
                         // Construct a new data type with test results and save it to mongo
                         DetectorStatusWithTestResult detectorStatusWithTestResult=
                                 new DetectorStatusWithTestResult(detectorStatus,detectorStatusTestResult);
                         String detectorStatusWithTestResultInString =mapper.writeValueAsString(detectorStatusWithTestResult);
                         Document documentWithTestResult=Document.parse(detectorStatusWithTestResultInString);
-                        save.insertOneToMongodbCollection(mongodbName,collectionDetectorStatusWithTestResult,documentWithTestResult);
-*/
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionDetectorStatusWithTestResult
+                                ,documentWithTestResult);
+
+                        // Construct individual detector status and save it to MongoDB
+                        List<DetectorStatusIndividual> detectorStatusIndividualList=DetectorStatusIndividual.
+                                constructIndividualDetectorStatus(detectorStatus);
+                        if(detectorStatusIndividualList.size()>0){
+                            List<Document> documentList=new ArrayList<Document>();
+                            for(int i=0;i<detectorStatusIndividualList.size();i++){
+                                String detectorStatusIndividual =mapper.writeValueAsString(detectorStatusIndividualList.get(i));
+                                Document documentDetectorStatusIndividual=Document.parse(detectorStatusIndividual);
+                                documentList.add(documentDetectorStatusIndividual);
+                            }
+                            save.insertMultipleToMongodbCollection(Configuration.database,
+                                    Configuration.collectionDetectorStatusIndividual,documentList);
+                        }
                     }
                 });
 
