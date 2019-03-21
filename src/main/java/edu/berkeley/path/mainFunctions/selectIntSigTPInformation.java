@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import static edu.berkeley.path.database.MongoDB.connect.getCollectionMongoDBStandalone;
-import edu.berkeley.path.processor.SignalTimingPlanInventory.SequenceInformation;
-import edu.berkeley.path.processor.SignalTimingPlanInventory.PhaseTPList;
+import edu.berkeley.path.processor.SignalTimingPatternInventory;
+
 import static edu.berkeley.path.database.MongoDB.select.*;
 
 
@@ -43,10 +43,18 @@ public class selectIntSigTPInformation {
             Document document=documentForGivenDeviceIdAndTimingPlanAndTime(collection
                     , key.get(0), key.get(1), key.get(2), value.get(0), value.get(1));
 
-            SequenceInformation.getFromTimingPlanDocument(document);
-            PhaseTPList.getAllPhaseTPFromTimingPlanDocument(document);
-            PhaseTPList.getTPFromTimingPlanDocumentWithGivenId(document,1);
-            PhaseTPList.getTPFromTimingPlanDocumentWithGivenId(document,8);
+            SignalTimingPatternInventory.getOrganizationInformationFromTimingPlanDocument(document);
+            SignalTimingPatternInventory.getOrganizationIdFromTimingPlanDocument(document);
+            SignalTimingPatternInventory.getDeviceIdFromTimingPlanDocument(document);
+            SignalTimingPatternInventory.getTimingPatternIdFromTimingPlanDocument(document);
+            SignalTimingPatternInventory.getTimingPatternNameFromTimingPlanDocument(document);
+            SignalTimingPatternInventory.getCycleLengthFromTimingPlanDocument(document);
+            SignalTimingPatternInventory.getOffsetTimeFromTimingPlanDocument(document);
+            SignalTimingPatternInventory.getLastUpdateTimeFromTimingPlanDocument(document);
+            SignalTimingPatternInventory.getSequenceDataFromTimingPlanDocument(document);
+            SignalTimingPatternInventory.getAllPhaseTPFromTimingPlanDocument(document);
+            SignalTimingPatternInventory.getTPFromTimingPlanDocumentWithGivenId(document,1);
+            SignalTimingPatternInventory.getTPFromTimingPlanDocumentWithGivenId(document,8);
         }
 
     }
