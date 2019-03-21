@@ -300,13 +300,15 @@ public class IntersectionSignalTimingPatternInventoryTestResult {
         }
 
         // Cycle Length
-        if(intersectionSignalTimingPatternInventory.getCycleLength()<0 || intersectionSignalTimingPatternInventory.getCycleLength()>255){
+        if(intersectionSignalTimingPatternInventory.getCycleLength()<0 ||
+                intersectionSignalTimingPatternInventory.getCycleLength()>255){
             errorMessages+="Cycle length is out of bound;";
             isCycleLengthValid=false;
         }
 
         // Offset Time
-        if(intersectionSignalTimingPatternInventory.getOffsetTime()<0 || intersectionSignalTimingPatternInventory.getOffsetTime()>255){
+        if(intersectionSignalTimingPatternInventory.getOffsetTime()<0 ||
+                intersectionSignalTimingPatternInventory.getOffsetTime()>255){
             errorMessages+="Offset time is out of bound;";
             isOffsetTimeValid=false;
         }

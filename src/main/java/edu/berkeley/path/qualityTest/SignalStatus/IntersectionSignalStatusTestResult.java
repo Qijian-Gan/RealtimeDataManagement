@@ -625,39 +625,75 @@ public class IntersectionSignalStatusTestResult {
         }
 
         // Cycle Length Planned
-        if(intersectionSignalStatus.getCycleLengthPlanned()<0 || intersectionSignalStatus.getCycleLengthPlanned()>255){
-            errorMessages+="Cycle length planned is out of bound;";
+        if(intersectionSignalStatus.getCycleLengthPlanned()==null){
+            errorMessages+="Cycle length planned is empty;";
             isCycleLengthPlannedValid=false;
+        }else {
+            if( intersectionSignalStatus.getCycleLengthPlanned()<0 ||
+                    intersectionSignalStatus.getCycleLengthPlanned()>255){
+                errorMessages+="Cycle length planned is out of bound;";
+                isCycleLengthPlannedValid=false;
+            }
         }
 
         // Cycle Length Current
-        if(intersectionSignalStatus.getCycleLengthCurrent()<0 || intersectionSignalStatus.getCycleLengthCurrent()>255){
-            errorMessages+="Cycle length current is out of bound;";
-            isCycleLengthCurrentValid=false;
+        if(intersectionSignalStatus.getCycleLengthCurrent()==null){
+            errorMessages += "Cycle length current is empty;";
+            isCycleLengthCurrentValid = false;
+        }else {
+            if (intersectionSignalStatus.getCycleLengthCurrent() < 0 ||
+                    intersectionSignalStatus.getCycleLengthCurrent() > 255) {
+                errorMessages += "Cycle length current is out of bound;";
+                isCycleLengthCurrentValid = false;
+            }
         }
 
         // Cycle Length Previous
-        if(intersectionSignalStatus.getCycleLengthPrevious()<0 || intersectionSignalStatus.getCycleLengthPrevious()>255){
-            errorMessages+="Cycle length previous is out of bound;";
-            isCycleLengthPreviousValid=false;
+        if(intersectionSignalStatus.getCycleLengthPrevious()==null){
+            errorMessages += "Cycle length previous is empty;";
+            isCycleLengthPreviousValid = false;
+        }else {
+            if (intersectionSignalStatus.getCycleLengthPrevious() < 0 ||
+                    intersectionSignalStatus.getCycleLengthPrevious() > 255) {
+                errorMessages += "Cycle length previous is out of bound;";
+                isCycleLengthPreviousValid = false;
+            }
         }
 
         // Cycle Length Master
-        if(intersectionSignalStatus.getCycleLengthMaster()<0 || intersectionSignalStatus.getCycleLengthMaster()>255){
-            errorMessages+="Cycle length master is out of bound;";
-            isCycleLengthMasterValid=false;
+        if(intersectionSignalStatus.getCycleLengthMaster()==null){
+            errorMessages += "Cycle length master is empty;";
+            isCycleLengthMasterValid = false;
+        }else {
+            if (intersectionSignalStatus.getCycleLengthMaster() < 0 ||
+                    intersectionSignalStatus.getCycleLengthMaster() > 255) {
+                errorMessages += "Cycle length master is out of bound;";
+                isCycleLengthMasterValid = false;
+            }
         }
 
         // Cycle Counter
-        if(intersectionSignalStatus.getCycleCounter()<0 || intersectionSignalStatus.getCycleCounter()>510){
-            errorMessages+="Cycle counter is out of bound;";
-            isCycleCounterValid=false;
+        if(intersectionSignalStatus.getCycleCounter()==null){
+            errorMessages += "Cycle counter is empty;";
+            isCycleCounterValid = false;
+        }else {
+            if (intersectionSignalStatus.getCycleCounter() < 0 ||
+                    intersectionSignalStatus.getCycleCounter() > 510) {
+                errorMessages += "Cycle counter is out of bound;";
+                isCycleCounterValid = false;
+            }
         }
 
         // Cycle Counter Master
-        if(intersectionSignalStatus.getCycleCounterMaster()<0 || intersectionSignalStatus.getCycleCounterMaster()>510){
-            errorMessages+="Cycle counter master is out of bound;";
-            isCycleCounterMasterValid=false;
+        if(intersectionSignalStatus.getCycleCounterMaster()==null){
+            errorMessages += "Cycle counter master is empty;";
+            isCycleCounterMasterValid = false;
+        }else {
+            if (intersectionSignalStatus.getCycleCounterMaster() < 0 ||
+                    intersectionSignalStatus.getCycleCounterMaster() > 510) {
+                errorMessages += "Cycle counter master is out of bound;";
+                isCycleCounterMasterValid = false;
+            }
         }
 
         // Offset Reference
@@ -667,21 +703,39 @@ public class IntersectionSignalStatusTestResult {
         }
 
         // Offset Time planned
-        if(intersectionSignalStatus.getOffsetTimePlanned()<0 || intersectionSignalStatus.getOffsetTimePlanned()>255){
-            errorMessages+="Empty offset time planned;";
-            isOffsetTimePlannedValid=false;
+        if(intersectionSignalStatus.getOffsetTimePlanned()==null){
+            errorMessages += "Offset time planned is empty;";
+            isOffsetTimePlannedValid = false;
+        }else {
+            if (intersectionSignalStatus.getOffsetTimePlanned() < 0
+                    || intersectionSignalStatus.getOffsetTimePlanned() > 255) {
+                errorMessages += "Offset time planned is out of bound;";
+                isOffsetTimePlannedValid = false;
+            }
         }
 
         // Offset Time Current
-        if(intersectionSignalStatus.getOffsetTimeCurrent()<0 || intersectionSignalStatus.getOffsetTimeCurrent()>255){
-            errorMessages+="Empty offset time current;";
-            isOffsetTimeCurrentValid=false;
+        if(intersectionSignalStatus.getOffsetTimeCurrent()==null){
+            errorMessages += "Offset time current is empty;";
+            isOffsetTimeCurrentValid = false;
+        }else {
+            if (intersectionSignalStatus.getOffsetTimeCurrent() < 0
+                    || intersectionSignalStatus.getOffsetTimeCurrent() > 255) {
+                errorMessages += "Offset time current is out of bound;";
+                isOffsetTimeCurrentValid = false;
+            }
         }
 
         // Offset time Previous
-        if(intersectionSignalStatus.getOffsetTimePrevious()<0 || intersectionSignalStatus.getOffsetTimePrevious()>255){
-            errorMessages+="Empty offset time previous;";
-            isOffsetTimePreviousValid=false;
+        if(intersectionSignalStatus.getOffsetTimePrevious()==null){
+            errorMessages += "Offset time previous is empty;";
+            isOffsetTimePreviousValid = false;
+        }else {
+            if (intersectionSignalStatus.getOffsetTimePrevious() < 0
+                    || intersectionSignalStatus.getOffsetTimePrevious() > 255) {
+                errorMessages += "Offset time previous is out of bound;";
+                isOffsetTimePreviousValid = false;
+            }
         }
 
         // Controller Timestamp

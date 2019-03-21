@@ -2,23 +2,23 @@ package edu.berkeley.path.objects;
 
 import org.tmdd._303.messages.IntersectionSignalInventory;
 
+import java.util.Date;
+
 public class IntersectionSignalInventoryRev {
 
     // Keys for intersection signal inventory
     private String organizationId;
     private String deviceId;
-    private String date;
-    private String time;
+    private Date lastUpdateTime;
 
     // The main body of intersection signal inventory
     private IntersectionSignalInventory intersectionSignalInventory;
 
-    public IntersectionSignalInventoryRev(String _organizationId,String _deviceId, String _date, String _time,
+    public IntersectionSignalInventoryRev(String _organizationId,String _deviceId, Date _lastUpdateTime,
                                           IntersectionSignalInventory _intersectionSignalInventory){
         this.organizationId=_organizationId;
         this.deviceId=_deviceId;
-        this.date=_date;
-        this.time=_time;
+        this.lastUpdateTime=_lastUpdateTime;
         this.intersectionSignalInventory=_intersectionSignalInventory;
     }
 
@@ -31,12 +31,8 @@ public class IntersectionSignalInventoryRev {
         return deviceId;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public String getTime() {
-        return time;
+    public Date getLastUpdateTime() {
+        return lastUpdateTime;
     }
 
     public IntersectionSignalInventory getIntersectionSignalInventory() {
@@ -52,12 +48,8 @@ public class IntersectionSignalInventoryRev {
         this.deviceId = deviceId;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
+    public void setLastUpdateTime(Date lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
     }
 
     public void setIntersectionSignalInventory(IntersectionSignalInventory intersectionSignalInventory) {

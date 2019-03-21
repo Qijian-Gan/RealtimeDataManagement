@@ -132,17 +132,27 @@ public class IntersectionSignalPhaseStatusGroupTestResult {
         }
 
         // Phase Status Group Yellows
-        if(intersectionSignalPhaseStatusGroup.getPhaseStatusGroupYellows()<0||
-        intersectionSignalPhaseStatusGroup.getPhaseStatusGroupYellows()>255){
-            isPhaseStatusGroupYellowsValid=false;
-            errorMessages+="Phase status group yellows is out of bound;";
+        if(intersectionSignalPhaseStatusGroup.getPhaseStatusGroupYellows()==null){
+            isPhaseStatusGroupYellowsValid = false;
+            errorMessages += "Phase status group yellows is empty;";
+        }else{
+            if(intersectionSignalPhaseStatusGroup.getPhaseStatusGroupYellows()<0||
+                    intersectionSignalPhaseStatusGroup.getPhaseStatusGroupYellows()>255) {
+                isPhaseStatusGroupYellowsValid = false;
+                errorMessages += "Phase status group yellows is out of bound;";
+            }
         }
 
         // Phase Status Group Reds
-        if(intersectionSignalPhaseStatusGroup.getPhaseStatusGroupReds()<0||
-        intersectionSignalPhaseStatusGroup.getPhaseStatusGroupReds()>255){
+        if(intersectionSignalPhaseStatusGroup.getPhaseStatusGroupReds()==null){
             isPhaseStatusGroupRedsValid=false;
-            errorMessages+="Phase status group reds is out of bound;";
+            errorMessages+="Phase status group reds is empty;";
+        }else{
+            if(intersectionSignalPhaseStatusGroup.getPhaseStatusGroupReds()<0||
+                    intersectionSignalPhaseStatusGroup.getPhaseStatusGroupReds()>255){
+                isPhaseStatusGroupRedsValid=false;
+                errorMessages+="Phase status group reds is out of bound;";
+            }
         }
 
         // Phase Status Group Right On Red Prohib: extension, not available in TMDD documents

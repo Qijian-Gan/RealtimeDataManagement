@@ -17,21 +17,21 @@ public class Configuration {
     // **************************************************************
     // *********Message topics: Detector related*********************
     // Detector inventory
-    public static String intersectionDetectorInventory = "Consumer.research.VirtualTopic.CT.D7.DSS.DataOrdered.IntersectionDetectorInventory";
+    public static String intersectionDetectorInventory = "Consumer.research.VirtualTopic.CT.D7.DSS.Data.IntersectionDetectorInventory";
     public static String outputDetectorInventoryLocation="\\data\\detectorInventory";
     public static String collectionDetectorInventory="detectorInventory";
     public static String collectionDetectorInventoryWithTestResult="detectorInventoryWithTestResult";
     public static String collectionDetectorInventoryIndividual="detectorInventoryIndividual";
 
     // Detector status
-    public static String intersectionDetectorStatus = "Consumer.research.VirtualTopic.CT.D7.DSS.DataOrdered.IntersectionDetectorStatus";
+    public static String intersectionDetectorStatus = "Consumer.research.VirtualTopic.CT.D7.DSS.Data.IntersectionDetectorStatus";
     public static String outputDetectorStatusLocation="\\data\\detectorStatus";
     public static String collectionDetectorStatus="detectorStatus";
     public static String collectionDetectorStatusWithTestResult="detectorStatusWithTestResult";
     public static String collectionDetectorStatusIndividual="detectorStatusIndividual";
 
     // Detector data
-    public static String intersectionDetectorData = "Consumer.research.VirtualTopic.CT.D7.DSS.DataOrdered.IntersectionDetectorData";
+    public static String intersectionDetectorData = "Consumer.research.VirtualTopic.CT.D7.DSS.Data.IntersectionDetectorData";
     public static String outputDetectorDataLocation="\\data\\detectorData";
     public static String collectionDetectorData="detectorData";
     public static String collectionDetectorDataWithTestResult="detectorDataWithTestResult";
@@ -39,7 +39,7 @@ public class Configuration {
 
     // *********Message topics: Intersection signal related*********************
     // Signal Inventory
-    public static String intersectionSignalInventory = "Consumer.research.VirtualTopic.CT.D7.DSS.DataOrdered.IntersectionSignalInventory";
+    public static String intersectionSignalInventory = "Consumer.research.VirtualTopic.CT.D7.DSS.Data.IntersectionSignalInventory";
     public static String outputSignalInventoryLocation="\\data\\signalInventory";
     public static String collectionIntersectionSignalInventory="intersectionSignalInventory";
     public static String collectionIntersectionSignalInventoryWithTestResult="intersectionSignalInventoryWithTestResult";
@@ -48,16 +48,17 @@ public class Configuration {
     // Todo: update the message topic
     public static String intersectionSignalControlSchedule = "Consumer.research.VirtualTopic.CT.D7.210.DSSInterface.IntersectionSignalControlSchedule";
     public static String outputSignalControlLocation="\\data\\signalControl";
+    public static String collectionIntersectionSignalControlSchedule="intersectionSignalControlSchedule";
 
     // Signal status
-    public static String intersectionSignalStatus = "Consumer.research.VirtualTopic.CT.D7.DSS.DataOrdered.IntersectionSignalStatus";
+    public static String intersectionSignalStatus = "Consumer.research.VirtualTopic.CT.D7.DSS.Data.IntersectionSignalStatus";
     public static String outputSignalStatusLocation="\\data\\signalStatus";
     public static String collectionIntersectionSignalStatus="intersectionSignalStatus";
     public static String collectionIntersectionSignalStatusWithTestResult="intersectionSignalStatusWithTestResult";
 
     // Signal plan Inventory
-    public static String intersectionSignalPlanInventory = "Consumer.research.VirtualTopic.CT.D7.DSS.DataOrdered.IntersectionSignalTimingPatternInventory";
-    public static String outputSignalPlanInventoryLocation="\\data\\signalTimingPatternInventory";
+    public static String intersectionSignalTimingPatternInventory = "Consumer.research.VirtualTopic.CT.D7.DSS.Data.IntersectionSignalTimingPatternInventory";
+    public static String outputSignalTimingPatternInventoryLocation="\\data\\signalTimingPatternInventory";
     public static String collectionIntersectionSignalTimingPattern="intersectionSignalTimingPattern";
     public static String collectionIntersectionSignalTimingPatternWithTestResult="intersectionSignalTimingPatternsWithTestResult";
 

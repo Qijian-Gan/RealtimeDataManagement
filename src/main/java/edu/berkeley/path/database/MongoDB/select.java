@@ -5,17 +5,28 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Sorts;
+import edu.berkeley.path.util.DateTimeConversion;
 import org.bson.Document;
+import org.tmdd._303.messages.IntersectionSignalSequenceData;
+import org.tmdd._303.messages.IntersectionSignalTimingPatternInventory;
+import org.tmdd._303.messages.SectionSignalTimingPatternInventory;
+import org.tmdd._303.messages.IntersectionSignalTimingPatternInventory.SequenceInformation;
 
+import javax.print.Doc;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
 
 public class select {
 
+    // ***************************************************************
+    // Detector Data
+    // ***************************************************************
     public static FindIterable aggregatedDetectorDataForGivenDetectorIdAndDateAndTimePeriod(MongoCollection<Document> collection
             ,String detectorId, String fromDateTimeStr, String toDateTimeStr) throws ParseException {
 
@@ -39,5 +50,68 @@ public class select {
         return iterable;
     }
 
+
+    // ***************************************************************
+    // ***************************************************************
+    // Signal Inventory & Data
+    // ***************************************************************
+    // ***************************************************************
+    public static Map<List<String>,List<String>> upToDateDeviceIdAndTPIdAndTimeFromIntSigTP(MongoCollection<Document> collection){
+        // This function returns the most up-to-date Device Id--Timing Plan--DateTime from the Intersection Signal Timing Plan Inventory
+
+        // Get all available Device Id--Timing Plan--DateTime in the collection
+        FindIterable iterable=collection.find().projection(
+                fields(include("organizationInformation.organizationId","deviceId","timingPatternId",
+                        "lastUpdateTime.date","lastUpdateTime.time")));
+
+        // Get the (unique) most up-to-date set of Device Id--Timing Plan--DateTime
+        Map<List<String>,List<String>> uniqueDevIdTPAndTime=new HashMap<>();
+        Block<Document> hashBlock = new Block<Document>() {
+            public void apply(final Document document) {
+                String organizationId=((Document)document.get("organizationInformation")).get("organizationId").toString();
+                String deviceId=document.getString("deviceId");
+                String timingPatternId=document.getString("timingPatternId");
+                String date=((Document)document.get("lastUpdateTime")).get("date").toString();
+                String time=((Document)document.get("lastUpdateTime")).get("time").toString();
+                try {
+                    Date lastUpdateTime= DateTimeConversion.TMDDDateTimeToRegularDateTime(date,time);
+
+                    List<String> key=Arrays.asList(organizationId,deviceId,timingPatternId);
+                    if(uniqueDevIdTPAndTime.containsKey(key)){
+                        List<String> tmpDateTimeStr=uniqueDevIdTPAndTime.get(key);
+                        Date tmpDateTime=DateTimeConversion.TMDDDateTimeToRegularDateTime(tmpDateTimeStr.get(0),tmpDateTimeStr.get(1));
+                        if(lastUpdateTime.getTime()>tmpDateTime.getTime()){// Find a latest one
+                            uniqueDevIdTPAndTime.replace(key,tmpDateTimeStr,Arrays.asList(date,time));
+                        }
+                    }else{
+                        uniqueDevIdTPAndTime.put(key,Arrays.asList(date,time));
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+        iterable.forEach(hashBlock);
+        return uniqueDevIdTPAndTime;
+    }
+
+    public static Document documentForGivenDeviceIdAndTimingPlanAndTime(MongoCollection<Document> collection
+            ,String organizationId, String deviceId, String timingPlanId,String date, String time){
+        // This function is used to get the Json document for a given device id, timing plan, date and time.
+
+        FindIterable iterable=collection.find(and(eq("organizationInformation.organizationId",organizationId),
+                eq("deviceId",deviceId),eq("timingPatternId",timingPlanId),
+                eq("lastUpdateTime.date",date),eq("lastUpdateTime.time",time)));
+
+        Iterator iterator=iterable.iterator();
+        if(iterator.hasNext()){
+            Document document=(Document) iterator.next();
+            return document;
+        }else{
+            System.out.println("Document is not found for the given inputs!");
+            return null;
+        }
+    }
 
 }

@@ -129,9 +129,9 @@ public class IntersectionSignalTPInventoryPhaseTestResult {
         }
 
         // Split Mode
-        if(intersectionSignalTPInventoryPhase.getSplitMode()==null){
-            isSplitModeValid=false;
-            errorMessages+="Empty split mode;";
+        if (intersectionSignalTPInventoryPhase.getSplitMode() == null) {
+            isSplitModeValid = false;
+            errorMessages += "Empty split mode;";
         }
 
         // Phase Split
@@ -141,28 +141,51 @@ public class IntersectionSignalTPInventoryPhaseTestResult {
         }
 
         // Maximum green duration
-        if(intersectionSignalTPInventoryPhase.getMaximumGreenDuration()<0 ||intersectionSignalTPInventoryPhase.getMaximumGreenDuration()>3600){
-            isMaximumGreenDurationValid=false;
-            errorMessages+="Maximum green duration is invalid;";
+        if(intersectionSignalTPInventoryPhase.getMaximumGreenDuration()==null){
+            isMaximumGreenDurationValid = false;
+            errorMessages += "Maximum green duration is empty;";
+        }else {
+            if (intersectionSignalTPInventoryPhase.getMaximumGreenDuration() < 0 ||
+                    intersectionSignalTPInventoryPhase.getMaximumGreenDuration() > 3600) {
+                isMaximumGreenDurationValid = false;
+                errorMessages += "Maximum green duration is invalid;";
+            }
         }
 
         // Minimum green duration
-        if(intersectionSignalTPInventoryPhase.getMinimumGreenDuration()<0 ||intersectionSignalTPInventoryPhase.getMinimumGreenDuration()>3600){
-            isMinimumGreenDurationValid=false;
-            errorMessages+="Minimum green duration is invalid;";
+        if(intersectionSignalTPInventoryPhase.getMinimumGreenDuration()==null){
+            isMinimumGreenDurationValid = false;
+            errorMessages += "Minimum green duration is empty;";
+        }else {
+            if (intersectionSignalTPInventoryPhase.getMinimumGreenDuration() < 0 ||
+                    intersectionSignalTPInventoryPhase.getMinimumGreenDuration() > 3600) {
+                isMinimumGreenDurationValid = false;
+                errorMessages += "Minimum green duration is invalid;";
+            }
         }
 
         // Vehicle Clearance Duration
-        if(intersectionSignalTPInventoryPhase.getVehicleClearanceDuration()<0 ||
-                intersectionSignalTPInventoryPhase.getVehicleClearanceDuration()>3600){
-            isVehicleClearanceDurationValid=false;
-            errorMessages+="Vehicle clearance duration is invalid;";
+        if(intersectionSignalTPInventoryPhase.getVehicleClearanceDuration()==null){
+            isVehicleClearanceDurationValid = false;
+            errorMessages += "Vehicle clearance duration is empty;";
+        }else {
+            if (intersectionSignalTPInventoryPhase.getVehicleClearanceDuration() < 0 ||
+                    intersectionSignalTPInventoryPhase.getVehicleClearanceDuration() > 3600) {
+                isVehicleClearanceDurationValid = false;
+                errorMessages += "Vehicle clearance duration is invalid;";
+            }
         }
 
         // Vehicle Red Duration
-        if(intersectionSignalTPInventoryPhase.getVehicleRedDuration()<0 || intersectionSignalTPInventoryPhase.getVehicleRedDuration()>3600){
-            isVehicleRedDurationValid=false;
-            errorMessages+="Vehicle red duration is invalid;";
+        if(intersectionSignalTPInventoryPhase.getVehicleRedDuration()==null){
+            isVehicleRedDurationValid = false;
+            errorMessages += "Vehicle red duration is empty;";
+        }else {
+            if (intersectionSignalTPInventoryPhase.getVehicleRedDuration() < 0 ||
+                    intersectionSignalTPInventoryPhase.getVehicleRedDuration() > 3600) {
+                isVehicleRedDurationValid = false;
+                errorMessages += "Vehicle red duration is invalid;";
+            }
         }
 
         // Assessment
