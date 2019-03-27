@@ -276,12 +276,13 @@ public class DataReaderRoute extends RouteBuilder {
                         // Save the original file to MongoDB with a new set of keys
                         // Keys: organizationId, deviceId, date, time
                         Date lastUpdateTime= DateTimeConversion.TMDDDateTimeToRegularDateTime(
-                                intersectionSignalStatus.getDeviceStatusHeader().getLastCommTime().getDate(),
-                                intersectionSignalStatus.getDeviceStatusHeader().getLastCommTime().getTime());
+                                intersectionSignalStatus.getControllerTimestamp().getDate(),
+                                intersectionSignalStatus.getControllerTimestamp().getTime());
                         IntersectionSignalStatusRev intersectionSignalStatusRev=new IntersectionSignalStatusRev(
                                 intersectionSignalStatus.getDeviceStatusHeader().getOrganizationInformation().getOrganizationId(),
-                                intersectionSignalStatus.getDeviceStatusHeader().getDeviceId()
-                                ,lastUpdateTime, intersectionSignalStatus);
+                                intersectionSignalStatus.getDeviceStatusHeader().getDeviceId(),
+                                intersectionSignalStatus.getTimingPatternIdCurrent(),
+                                lastUpdateTime, intersectionSignalStatus);
                         String signalStatusRevInString =mapper.writeValueAsString(intersectionSignalStatusRev);
                         Document documentRev=Document.parse(signalStatusRevInString);
                         save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionIntersectionSignalStatus,documentRev);

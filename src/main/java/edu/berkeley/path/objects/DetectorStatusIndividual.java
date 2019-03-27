@@ -85,10 +85,20 @@ public class DetectorStatusIndividual {
         // Construct individual detector status
 
         // Get the station information
-        String organizationId=detectorStatus.getDetectorStationStatusHeader().getOrganizationInformation()
-                .getOrganizationId();
-        String stationId=detectorStatus.getDetectorStationStatusHeader().getDeviceId();
-        String stationStatus=detectorStatus.getDetectorStationStatusHeader().getDeviceStatus();
+        String organizationId;
+        String stationId;
+        String stationStatus;
+        // Just in case the Header Information is Null
+        if(detectorStatus.getDetectorStationStatusHeader() ==null){
+            organizationId="Unknown";
+            stationId="Unknown";
+            stationStatus="Unknown";
+        }else{
+            organizationId=detectorStatus.getDetectorStationStatusHeader().getOrganizationInformation()
+                    .getOrganizationId();
+            stationId=detectorStatus.getDetectorStationStatusHeader().getDeviceId();
+            stationStatus=detectorStatus.getDetectorStationStatusHeader().getDeviceStatus();
+        }
 
         // TODO: currently the Last-Update-Time is missing in the messages
         // TODO: therefore, fill this attribute with the current date time

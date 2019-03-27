@@ -114,4 +114,53 @@ public class select {
         }
     }
 
+    public static Map<List<String>,Long> upToDateDeviceIdAndTPIdAndTimeFromIntSigStatus(MongoCollection<Document> collection){
+        // This function returns the most up-to-date Device Id--Timing Plan--DateTime from the Intersection Signal Status
+
+        // Get all available Device Id--Timing Plan--DateTime in the collection
+        FindIterable iterable=collection.find().projection(
+                fields(include("organizationId","deviceId","timingPatternIdCurrent",
+                        "lastUpdateTime")));
+
+        // Get the (unique) most up-to-date set of Device Id--Timing Plan--DateTime
+        Map<List<String>,Long> uniqueDevIdTPAndTime=new HashMap<>();
+        Block<Document> hashBlock = new Block<Document>() {
+            public void apply(final Document document) {
+                String organizationId=document.get("organizationId").toString();
+                String deviceId=document.getString("deviceId");
+                String timingPatternId=document.getString("timingPatternIdCurrent");
+                long lastUpdateTime=(long)document.get("lastUpdateTime");
+                List<String> key=Arrays.asList(organizationId,deviceId,timingPatternId);
+                if(uniqueDevIdTPAndTime.containsKey(key)){
+                    long tmpDateTime=uniqueDevIdTPAndTime.get(key);
+                    if(lastUpdateTime>tmpDateTime){// Find a latest one
+                        uniqueDevIdTPAndTime.replace(key,tmpDateTime,lastUpdateTime);
+                    }
+                }else{
+                    uniqueDevIdTPAndTime.put(key,lastUpdateTime);
+                }
+            }
+        };
+        iterable.forEach(hashBlock);
+        return uniqueDevIdTPAndTime;
+    }
+
+    public static List<Document> documentsForGivenDeviceIdAndTimingPlanAndTimePeriods(MongoCollection<Document> collection
+            ,String organizationId, String deviceId, String timingPlanId,long startTime, long endTime){
+        // This function is used to get the Json documents for a given device id, timing plan, and time periods.
+
+        FindIterable iterable=collection.find(and(eq("organizationId",organizationId),
+                eq("deviceId",deviceId),eq("timingPatternIdCurrent",timingPlanId),
+                gte("lastUpdateTime",startTime),lt("lastUpdateTime",endTime))).sort(Sorts.ascending("lastUpdateTime"));
+
+        // Get the list of documents
+        List<Document> documentList=new ArrayList<>();
+        Iterator iterator=iterable.iterator();
+        while(iterator.hasNext()){
+            Document document=(Document) iterator.next();
+            documentList.add(document);
+        }
+        return documentList;
+    }
+
 }
