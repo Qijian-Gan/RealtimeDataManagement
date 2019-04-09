@@ -70,8 +70,10 @@ public class Configuration {
     public static String collectionAggregatedFrom="detectorDataIndividual";
     public static String collectionAggregatedTo="detectorDataAggregated";
     public static int interval=300; // in Seconds
-    public static String outputFolder="\\data\\output\\";
-
+    public static String outputFolder="\\data\\output\\detector\\";
+    // ******************Signal Data*******************************
+    public static int intervalSignal=3600; // in Seconds
+    public static String outputFolderSignal="\\data\\output\\signal\\";
 
     // **************************************************************
     // Local Folders

@@ -31,6 +31,9 @@ public class selectIntSigTPInformation {
         MongoCollection<Document> collection=getCollectionMongoDBStandalone(Configuration.mongodbName,
                 Configuration.collectionIntersectionSignalTimingPattern);
 
+        List<String> uniqueDeviceIds=getUniqueListOfDeviceIdsFromIntSigTP(collection);
+        System.out.println(uniqueDeviceIds);
+
         // Key<Organization Id, Device Id, Timing Pattern Id> && Value<Date, Time>
         Map<List<String>,List<String>> uniqueDevIdTPAndTime=upToDateDeviceIdAndTPIdAndTimeFromIntSigTP(collection);
 

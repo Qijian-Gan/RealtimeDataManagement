@@ -114,6 +114,26 @@ public class select {
         }
     }
 
+    public static List<String> getUniqueListOfDeviceIdsFromIntSigTP(MongoCollection<Document> collection){
+        // This function is used to get a unique list of device Ids from Intersection Signal Timing Pattern Inventory
+
+        // Get all available Device Ids in the collection
+        FindIterable iterable=collection.find().projection(
+                fields(include("deviceId")));
+
+        Iterator iterator=iterable.iterator();
+        List<String> uniqueDeviceIds=new ArrayList<>();
+        HashSet<String> set=new HashSet<>();
+        while(iterator.hasNext()){
+            Document document=(Document) iterator.next();
+            if(set.add(document.get("deviceId").toString())){
+                uniqueDeviceIds.add(document.get("deviceId").toString());
+            }
+        }
+        Collections.sort(uniqueDeviceIds);// Sort the device Ids
+        return uniqueDeviceIds;
+    }
+
     public static Map<List<String>,Long> upToDateDeviceIdAndTPIdAndTimeFromIntSigStatus(MongoCollection<Document> collection){
         // This function returns the most up-to-date Device Id--Timing Plan--DateTime from the Intersection Signal Status
 
@@ -163,4 +183,23 @@ public class select {
         return documentList;
     }
 
+    public static List<String> getUniqueListOfDeviceIdsFromIntSigStatus(MongoCollection<Document> collection){
+        // This function is used to get a unique list of device Ids from Intersection Signal Status
+
+        // Get all available Device Ids in the collection
+        FindIterable iterable=collection.find().projection(
+                fields(include("deviceId")));
+
+        Iterator iterator=iterable.iterator();
+        List<String> uniqueDeviceIds=new ArrayList<>();
+        HashSet<String> set=new HashSet<>();
+        while(iterator.hasNext()){
+            Document document=(Document) iterator.next();
+            if(set.add(document.get("deviceId").toString())){
+                uniqueDeviceIds.add(document.get("deviceId").toString());
+            }
+        }
+        Collections.sort(uniqueDeviceIds);// Sort the device Ids
+        return uniqueDeviceIds;
+    }
 }

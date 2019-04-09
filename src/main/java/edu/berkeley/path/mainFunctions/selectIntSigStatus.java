@@ -30,6 +30,9 @@ public class selectIntSigStatus {
         MongoCollection<Document> collection=getCollectionMongoDBStandalone(Configuration.mongodbName,
                 Configuration.collectionIntersectionSignalStatus);
 
+        List<String> uniqueDeviceIds=getUniqueListOfDeviceIdsFromIntSigStatus(collection);
+        System.out.println(uniqueDeviceIds);
+
         // Key<Organization Id, Device Id, Timing Pattern Id> && Value<Date, Time>
         Map<List<String>,Long> uniqueDevIdTPAndTime=upToDateDeviceIdAndTPIdAndTimeFromIntSigStatus(collection);
 

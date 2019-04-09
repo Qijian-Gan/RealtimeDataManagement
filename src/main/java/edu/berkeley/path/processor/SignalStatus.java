@@ -86,10 +86,10 @@ public class SignalStatus {
         return map;
     }
 
-    public static Map<String,IntersectionRingStatus> getRingStatusFromSignalStatus(IntersectionSignalStatus intersectionSignalStatus){
+    public static Map<Integer,IntersectionRingStatus> getRingStatusFromSignalStatus(IntersectionSignalStatus intersectionSignalStatus){
         // This function returns a list of Ring Status from the Signal Status
 
-        Map<String,IntersectionRingStatus> map=new HashMap<>();
+        Map<Integer,IntersectionRingStatus> map=new HashMap<>();
         if(intersectionSignalStatus.getRingStatusList()!=null){
             List<IntersectionSignalRingStatus> intersectionSignalRingStatusList=
                     intersectionSignalStatus.getRingStatusList().getRingStatus();
@@ -104,7 +104,7 @@ public class SignalStatus {
                 int ringStatus=intersectionSignalRingStatusList.get(i).getRingStatus();
                 String binaryString=Integer.toBinaryString(ringStatus);
                 intersectionRingStatus.update(binaryString);
-                map.put(ringId,intersectionRingStatus);
+                map.put(Integer.parseInt(ringId),intersectionRingStatus);
             }
         }
         return map;

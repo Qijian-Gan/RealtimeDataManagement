@@ -218,37 +218,43 @@ public class DataReaderRoute extends RouteBuilder {
 
                         // Save the original file locally
                         Date date = new Date();
-                        String fileName=Constants.Construct_A_File_Name(Configuration.outputSignalInventoryLocation,dateFormat.format(date),"Append");
+                        String fileName = Constants.Construct_A_File_Name(Configuration.outputSignalInventoryLocation, dateFormat.format(date), "Append");
                         producerTemplate.sendBody(fileName, body);
 
                         // Serialize the message
                         IntersectionSignalInventory intersectionSignalInventory = (IntersectionSignalInventory)
-                                JsonUtil.serializer().fromJson(body, new TypeReference<IntersectionSignalInventory>() {}) ;
+                                JsonUtil.serializer().fromJson(body, new TypeReference<IntersectionSignalInventory>() {
+                                });
 
                         // Save the original file to MongoDB with a new set of keys
                         // Keys: organizationId, deviceId, date, time
-                        Date lastUpdateTime= DateTimeConversion.TMDDDateTimeToRegularDateTime(
-                                intersectionSignalInventory.getDeviceInventoryHeader().getLastUpdateTime().getDate(),
-                                intersectionSignalInventory.getDeviceInventoryHeader().getLastUpdateTime().getTime());
-                        IntersectionSignalInventoryRev intersectionSignalInventoryRev=
-                                new IntersectionSignalInventoryRev(intersectionSignalInventory.getDeviceInventoryHeader().getOrganizationInformation().getOrganizationId(),
-                                        intersectionSignalInventory.getDeviceInventoryHeader().getDeviceId()
-                                        ,lastUpdateTime, intersectionSignalInventory);
-                        String signalInventoryRevInString =mapper.writeValueAsString(intersectionSignalInventoryRev);
-                        Document documentRev=Document.parse(signalInventoryRevInString);
-                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionIntersectionSignalInventory,documentRev);
+                        if (intersectionSignalInventory.getDeviceInventoryHeader() == null) {
+                            System.out.println("Empty device header for Intersection Signal Inventory!!");
+                        } else {
+                            Date lastUpdateTime = DateTimeConversion.TMDDDateTimeToRegularDateTime(
+                                    intersectionSignalInventory.getDeviceInventoryHeader().getLastUpdateTime().getDate(),
+                                    intersectionSignalInventory.getDeviceInventoryHeader().getLastUpdateTime().getTime());
+
+                            IntersectionSignalInventoryRev intersectionSignalInventoryRev =
+                                    new IntersectionSignalInventoryRev(intersectionSignalInventory.getDeviceInventoryHeader().getOrganizationInformation().getOrganizationId(),
+                                            intersectionSignalInventory.getDeviceInventoryHeader().getDeviceId()
+                                            , lastUpdateTime, intersectionSignalInventory);
+                            String signalInventoryRevInString = mapper.writeValueAsString(intersectionSignalInventoryRev);
+                            Document documentRev = Document.parse(signalInventoryRevInString);
+                            save.insertOneToMongodbCollection(Configuration.database, Configuration.collectionIntersectionSignalInventory, documentRev);
+                        }
 
                         // Perform the quality test and save the test results to MongoDB
-                        IntersectionSignalInventoryTestResult intersectionSignalInventoryTestResult= new IntersectionSignalInventoryTestResult();
+                        IntersectionSignalInventoryTestResult intersectionSignalInventoryTestResult = new IntersectionSignalInventoryTestResult();
                         intersectionSignalInventoryTestResult.Initialization();
                         intersectionSignalInventoryTestResult.Check(intersectionSignalInventory);
                         // Construct a new data type with test results and save it to mongo
-                        IntersectionSignalInventoryWithTestResult intersectionSignalInventoryWithTestResult=
-                                new IntersectionSignalInventoryWithTestResult(intersectionSignalInventory,intersectionSignalInventoryTestResult);
-                        String signalInventoryWithTestResultInString =mapper.writeValueAsString(intersectionSignalInventoryWithTestResult);
-                        Document documentWithTestResult=Document.parse(signalInventoryWithTestResultInString);
+                        IntersectionSignalInventoryWithTestResult intersectionSignalInventoryWithTestResult =
+                                new IntersectionSignalInventoryWithTestResult(intersectionSignalInventory, intersectionSignalInventoryTestResult);
+                        String signalInventoryWithTestResultInString = mapper.writeValueAsString(intersectionSignalInventoryWithTestResult);
+                        Document documentWithTestResult = Document.parse(signalInventoryWithTestResultInString);
                         save.insertOneToMongodbCollection(Configuration.database,
-                                Configuration.collectionIntersectionSignalInventoryWithTestResult,documentWithTestResult);
+                                Configuration.collectionIntersectionSignalInventoryWithTestResult, documentWithTestResult);
                     }
                 });
 

@@ -27,7 +27,7 @@ public class IntersectionSignalCycleStatus {
     private Map<Integer, List<Double>> plannedPhaseSplits;
 
     // Phase gap out, max out, and forced off status
-
+    
 
 
 
