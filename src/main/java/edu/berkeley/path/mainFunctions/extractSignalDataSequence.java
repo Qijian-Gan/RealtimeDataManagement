@@ -13,7 +13,7 @@ import java.util.Map;
 
 
 import static edu.berkeley.path.database.MongoDB.connect.getCollectionMongoDBStandalone;
-import static edu.berkeley.path.database.MongoDB.select.documentsForGivenDeviceIdAndTimingPlanAndTimePeriods;
+import static edu.berkeley.path.database.MongoDB.select.documentsForGivenDeviceIdAndTimingPlanAndTimePeriodsFromSigStatus;
 import static edu.berkeley.path.database.MongoDB.select.upToDateDeviceIdAndTPIdAndTimeFromIntSigStatus;
 import static edu.berkeley.path.database.MongoDB.extract.sequenceDataToCSVFileForEachDeviceIdAndTimingPlanAndTimePeriod;
 

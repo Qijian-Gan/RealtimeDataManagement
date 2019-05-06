@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static edu.berkeley.path.database.MongoDB.connect.getCollectionMongoDBStandalone;
-import static edu.berkeley.path.database.MongoDB.select.documentsForGivenDeviceIdAndTimingPlanAndTimePeriods;
+import static edu.berkeley.path.database.MongoDB.select.documentsForGivenDeviceIdAndTimingPlanAndTimePeriodsFromSigStatus;
 import static edu.berkeley.path.database.MongoDB.select.upToDateDeviceIdAndTPIdAndTimeFromIntSigStatus;
 import static edu.berkeley.path.processor.SignalStatus.*;
 import static edu.berkeley.path.processor.SignalStatus.getOverlapPhaseStatusGroupFromSiganlStatus;
@@ -45,7 +45,7 @@ public class getLatestCycleInformation {
             List<String> key=(List<String>) pair.getKey();
             long endTime=(long) pair.getValue();
             long startTime=endTime- duration*((long)1000.0);
-            List<Document> documentList=documentsForGivenDeviceIdAndTimingPlanAndTimePeriods(collectionSignalStatus
+            List<Document> documentList=documentsForGivenDeviceIdAndTimingPlanAndTimePeriodsFromSigStatus(collectionSignalStatus
                     ,key.get(0), key.get(1), key.get(2),startTime, endTime);
 
             // functions for each document

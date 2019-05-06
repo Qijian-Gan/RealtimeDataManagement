@@ -74,6 +74,7 @@ public class Configuration {
     // ******************Signal Data*******************************
     public static int intervalSignal=3600; // in Seconds
     public static String outputFolderSignal="\\data\\output\\signal\\";
+    public static String collectionCycleInformation="intersectionCycleInformation";
 
     // **************************************************************
     // Local Folders

@@ -43,7 +43,7 @@ public class selectIntSigTPInformation {
             List<String> key=(List<String>) pair.getKey();
             List<String> value=(List<String>) pair.getValue();
 
-            Document document=documentForGivenDeviceIdAndTimingPlanAndTime(collection
+            Document document=documentForGivenDeviceIdAndTimingPlanAndTimeFromIntSigTP(collection
                     , key.get(0), key.get(1), key.get(2), value.get(0), value.get(1));
 
             SignalTimingPatternInventory.getOrganizationInformationFromTimingPlanDocument(document);

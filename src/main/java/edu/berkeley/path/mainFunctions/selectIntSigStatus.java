@@ -44,7 +44,7 @@ public class selectIntSigStatus {
             List<String> key=(List<String>) pair.getKey();
             long endTime=(long) pair.getValue();
             long startTime=endTime- duration*((long)1000.0);
-            List<Document> documentList=documentsForGivenDeviceIdAndTimingPlanAndTimePeriods(collection
+            List<Document> documentList=documentsForGivenDeviceIdAndTimingPlanAndTimePeriodsFromSigStatus(collection
                     ,key.get(0), key.get(1), key.get(2),startTime, endTime);
 
             // functions for each document

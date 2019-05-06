@@ -30,7 +30,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.*;
 import static edu.berkeley.path.database.MongoDB.connect.getCollectionMongoDBStandalone;
 import static edu.berkeley.path.database.MongoDB.select.aggregatedDetectorDataForGivenDetectorIdAndDateAndTimePeriod;
-import static edu.berkeley.path.database.MongoDB.select.documentsForGivenDeviceIdAndTimingPlanAndTimePeriods;
+import static edu.berkeley.path.database.MongoDB.select.documentsForGivenDeviceIdAndTimingPlanAndTimePeriodsFromSigStatus;
 import static edu.berkeley.path.processor.SignalStatus.*;
 
 public class extract {
@@ -158,7 +158,7 @@ public class extract {
 
         int maxNumPhase=16; // Define the maximum number of phases
         int maxNumRing=4; // Define the maximum number of rings
-        List<Document> documentList=documentsForGivenDeviceIdAndTimingPlanAndTimePeriods(collectionSignalStatus
+        List<Document> documentList=documentsForGivenDeviceIdAndTimingPlanAndTimePeriodsFromSigStatus(collectionSignalStatus
                 ,organizationId, deviceId, timingPatternId,start.getTime(), end.getTime());
         long previousTime=0;
         for(int i=0;i<documentList.size();i++){
