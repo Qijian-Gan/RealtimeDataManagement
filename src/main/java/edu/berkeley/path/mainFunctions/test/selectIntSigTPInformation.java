@@ -1,13 +1,11 @@
-package edu.berkeley.path.mainFunctions;
+package edu.berkeley.path.mainFunctions.test;
 
 import com.mongodb.client.MongoCollection;
+import edu.berkeley.path.mainFunctions.Other.Application;
 import edu.berkeley.path.settings.Configuration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.bson.Document;
-import org.tmdd._303.messages.IntersectionSignalTPInventoryPhase;
-import org.tmdd._303.messages.IntersectionSignalTimingPatternInventory;
-import org.tmdd._303.messages.IntersectionSignalTimingPatternInventory.*;
 
 import java.io.IOException;
 import java.text.ParseException;

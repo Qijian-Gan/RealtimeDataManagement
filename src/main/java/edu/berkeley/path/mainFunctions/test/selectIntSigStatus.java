@@ -1,6 +1,7 @@
-package edu.berkeley.path.mainFunctions;
+package edu.berkeley.path.mainFunctions.test;
 
 import com.mongodb.client.MongoCollection;
+import edu.berkeley.path.mainFunctions.Other.Application;
 import edu.berkeley.path.settings.Configuration;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -14,28 +15,24 @@ import java.util.List;
 import java.util.Map;
 
 import static edu.berkeley.path.database.MongoDB.connect.getCollectionMongoDBStandalone;
-import static edu.berkeley.path.database.MongoDB.select.documentsForGivenDeviceIdAndTimingPlanAndTimePeriodsFromSigStatus;
-import static edu.berkeley.path.database.MongoDB.select.upToDateDeviceIdAndTPIdAndTimeFromIntSigStatus;
+import static edu.berkeley.path.database.MongoDB.select.*;
 import static edu.berkeley.path.processor.SignalStatus.*;
-import static edu.berkeley.path.processor.SignalStatus.getOverlapPhaseStatusGroupFromSiganlStatus;
 
-public class getLatestCycleInformation {
+public class selectIntSigStatus {
 
     private static final Logger LOG = LogManager.getLogger(Application.class);
 
 
     public static void main(String[] args) throws ParseException, IOException {
 
-        // Collection: Signal Status
-        MongoCollection<Document> collectionSignalStatus=getCollectionMongoDBStandalone(Configuration.mongodbName,
+        MongoCollection<Document> collection=getCollectionMongoDBStandalone(Configuration.mongodbName,
                 Configuration.collectionIntersectionSignalStatus);
-        // Collection: Signal TP Inventory
-        MongoCollection<Document> collectionSignalTPInventory=getCollectionMongoDBStandalone(Configuration.mongodbName,
-                Configuration.collectionIntersectionSignalTimingPattern);
 
-        // Get the latest/most up-to-date datetime information for each organizationId & deviceId & timing pattern
+        List<String> uniqueDeviceIds=getUniqueListOfDeviceIdsFromIntSigStatus(collection);
+        System.out.println(uniqueDeviceIds);
+
         // Key<Organization Id, Device Id, Timing Pattern Id> && Value<Date, Time>
-        Map<List<String>,Long> uniqueDevIdTPAndTime=upToDateDeviceIdAndTPIdAndTimeFromIntSigStatus(collectionSignalStatus);
+        Map<List<String>,Long> uniqueDevIdTPAndTime=upToDateDeviceIdAndTPIdAndTimeFromIntSigStatus(collection);
 
         long duration=5*60; // Search window in seconds;
 
@@ -45,7 +42,7 @@ public class getLatestCycleInformation {
             List<String> key=(List<String>) pair.getKey();
             long endTime=(long) pair.getValue();
             long startTime=endTime- duration*((long)1000.0);
-            List<Document> documentList=documentsForGivenDeviceIdAndTimingPlanAndTimePeriodsFromSigStatus(collectionSignalStatus
+            List<Document> documentList=documentsForGivenDeviceIdAndTimingPlanAndTimePeriodsFromSigStatus(collection
                     ,key.get(0), key.get(1), key.get(2),startTime, endTime);
 
             // functions for each document

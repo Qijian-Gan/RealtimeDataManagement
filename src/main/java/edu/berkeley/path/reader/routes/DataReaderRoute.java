@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.berkeley.path.qualityTest.DetectorData.DetectorDataTestResult;
 import edu.berkeley.path.qualityTest.DetectorInventory.DetectorInventoryTestResult;
 import edu.berkeley.path.qualityTest.DetectorStatus.DetectorStatusTestResult;
+import edu.berkeley.path.qualityTest.SignalControlSchedule.IntersectionSignalControlScheduleTestResult;
 import edu.berkeley.path.qualityTest.SignalInventory.IntersectionSignalInventoryTestResult;
 import edu.berkeley.path.qualityTest.SignalPlanInventory.IntersectionSignalTimingPatternInventoryTestResult;
 import edu.berkeley.path.qualityTest.SignalStatus.IntersectionSignalStatusTestResult;
@@ -310,7 +311,6 @@ public class DataReaderRoute extends RouteBuilder {
         // ******************************************************************
         // Intersection signal control schedule
         // ******************************************************************
-        // TODO: not implemented in Arcadia yet
         fromF(Constants.SEND_ACTIVEMQ_W_QUEUE,Configuration.intersectionSignalControlSchedule)
                 .process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -326,12 +326,26 @@ public class DataReaderRoute extends RouteBuilder {
 
                         // Save original document to mongodb
                         Document document=Document.parse(body);
-                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionIntersectionSignalControlSchedule
-                                ,document);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionIntersectionSignalControlSchedule,document);
 
                         // Serialize the message
-                        IntersectionSignalControlSchedule intersectionSignalControlSchedule1 = (IntersectionSignalControlSchedule)
+                        IntersectionSignalControlSchedule intersectionSignalControlSchedule = (IntersectionSignalControlSchedule)
                                 JsonUtil.serializer().fromJson(body, new TypeReference<IntersectionSignalControlSchedule>() {}) ;
+
+                        // Perform the quality test and save the test results to MongoDB
+                        IntersectionSignalControlScheduleTestResult intersectionSignalControlScheduleTestResult=
+                                new IntersectionSignalControlScheduleTestResult();
+                        intersectionSignalControlScheduleTestResult.Initialization();
+                        intersectionSignalControlScheduleTestResult.Check(intersectionSignalControlSchedule);
+                        // Construct a new data type with test results and save it to mongo
+                        IntersectionSignalControlScheduleWithTestResult intersectionSignalControlScheduleWithTestResult=
+                                new IntersectionSignalControlScheduleWithTestResult(intersectionSignalControlSchedule
+                                        ,intersectionSignalControlScheduleTestResult);
+                        String intersectionSignalControlScheduleWithTestResultInString =mapper.writeValueAsString
+                                (intersectionSignalControlScheduleWithTestResult);
+                        Document documentWithTestResult=Document.parse(intersectionSignalControlScheduleWithTestResultInString);
+                        save.insertOneToMongodbCollection(Configuration .database,
+                                Configuration.collectionIntersectionSignalControlScheduleWithTestResult,documentWithTestResult);
                     }
                 });
 

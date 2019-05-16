@@ -19,7 +19,7 @@
  * PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT,
  * UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
-package edu.berkeley.path.mainFunctions;
+package edu.berkeley.path.mainFunctions.Other;
 
 import org.apache.activemq.ActiveMQPrefetchPolicy;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;

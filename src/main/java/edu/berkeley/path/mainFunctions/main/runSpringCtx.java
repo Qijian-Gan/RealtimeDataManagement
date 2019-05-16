@@ -1,6 +1,6 @@
-package edu.berkeley.path.mainFunctions;
+package edu.berkeley.path.mainFunctions.main;
 
-import edu.berkeley.path.mainFunctions.Application;
+import edu.berkeley.path.mainFunctions.Other.Application;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

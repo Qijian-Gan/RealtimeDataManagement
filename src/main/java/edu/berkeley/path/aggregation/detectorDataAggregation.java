@@ -36,7 +36,7 @@ public class detectorDataAggregation {
         }
     }
 
-    public static List<Document> atGivenInterval(String collectionFrom,String collectionTo,final int interval) throws JsonProcessingException {
+    public static List<Document> atGivenInterval(String collectionFrom,String collectionTo,final int interval, String organization) throws JsonProcessingException {
         // This function is used to aggregate raw traffic data in "collectionFrom" at the "interval" level
 
         List<DetectorDataAggregated> detectorDataAggregatedList=new ArrayList<>();
@@ -48,23 +48,40 @@ public class detectorDataAggregation {
         // Get a list of detector id in the raw data
         AggregateIterable<Document> documentAggregateIterable=getDetectorDataIndexFromGivenCollection(collFrom);
 
+        // Check organization
+        String orgId="";
+        int detIdThreshold=0;
+        if(organization.equals("Arcadia")){
+            orgId="1";
+            detIdThreshold=99999;
+        }else if(organization.equals("LACO")){
+            orgId="LACO";
+        }
+
         // For each unique id of organization-station-detector
+        String finalOrgId = orgId;
+        int finalDetIdThreshold = detIdThreshold;
         documentAggregateIterable.forEach((Block<Document>) document -> {
             // Get the key
             Document key=(Document) document.get("_id");
-            // Get the start time: depends on "collFrom" and "collTo"
-            Date startTime=getStartTimeForEachKeyForAggregation(key,collFrom,collTo,interval);
-            // Get the end time: depends on "collFrom" and the current time
-            Date endTime=getEndTimeForEachKeyForAggregation(key,collFrom,interval);
-            // Select the raw data for each key in the given time period
-            List<DetectorDataStructure> detectorDataStructureList=selectDataForGivenTimePeriodForEachKey(key, collFrom,startTime, endTime);
-            // Aggregation
-            List<DetectorDataAggregated> detectorDataAggregatedListByBlock=aggregateDataToDefinedInterval(key,detectorDataStructureList,startTime,endTime,interval);
-            // Add the aggregates
-            detectorDataAggregatedList.addAll(detectorDataAggregatedListByBlock);
-            // Printing summary
-            System.out.println("Org"+key.get("organizationId")+"&Int"+key.get("stationId")+"&Det"+key.get("detectorId")+
-                    ": Start Time="+startTime.toString()+" & End Time="+endTime.toString()+" & Rows to insert="+detectorDataAggregatedListByBlock.size());
+            if(!key.get("organizationId").equals(finalOrgId) || Integer.parseInt(key.get("detectorId").toString())< finalDetIdThreshold){
+                System.out.println("Skip: Org"+key.get("organizationId")+"&Int"+key.get("stationId")+"&Det"+key.get("detectorId"));
+            }else {
+                // Get the start time: depends on "collFrom" and "collTo"
+                Date startTime = getStartTimeForEachKeyForAggregation(key, collFrom, collTo, interval);
+                // Get the end time: depends on "collFrom" and the current time
+                Date endTime = getEndTimeForEachKeyForAggregation(key, collFrom, interval);
+                // Select the raw data for each key in the given time period
+                List<DetectorDataStructure> detectorDataStructureList = selectDataForGivenTimePeriodForEachKey(key, collFrom, startTime, endTime);
+                // Aggregation
+                List<DetectorDataAggregated> detectorDataAggregatedListByBlock = aggregateDataToDefinedInterval(key, detectorDataStructureList,
+                        startTime, endTime, interval);
+                // Add the aggregates
+                detectorDataAggregatedList.addAll(detectorDataAggregatedListByBlock);
+                // Printing summary
+                System.out.println("Org" + key.get("organizationId") + "&Int" + key.get("stationId") + "&Det" + key.get("detectorId") +
+                        ": Start Time=" + startTime.toString() + " & End Time=" + endTime.toString() + " & Rows to insert=" + detectorDataAggregatedListByBlock.size());
+            }
         });
 
         // Create a list of documents to insert into MongoDB
@@ -81,6 +98,7 @@ public class detectorDataAggregation {
     }
 
     public static AggregateIterable<Document> getDetectorDataIndexFromGivenCollection(MongoCollection<Document> coll){
+        // This function is used to get the list of detectors from given collection
 
         AggregateIterable<Document> iterable=coll.aggregate(
                 Arrays.asList(new Document("$group",new Document("_id",new Document("organizationId","$organizationId").
@@ -239,8 +257,11 @@ public class detectorDataAggregation {
                     if(tmpTimeTo>tmpTimeFrom){ // Within [timeFrom, timeTo]
                         deleteData.add(detectorDataStructureList.get(j));
                         double deltaT=(tmpTimeTo-tmpTimeFrom)/1000.0;
+                        // We use this time scale for hourly flow because in TMDD it is defined as the number of vehicles in the reported time period
+                        double timeScale=Math.round(3600*1000.0/(detectorDataStructureList.get(j).endTime.getTime()
+                                -detectorDataStructureList.get(j).startTime.getTime()));
                         // Weighted Hourly flow
-                        avgFlow=avgFlow+detectorDataStructureList.get(j).vehicleCount*deltaT/interval;
+                        avgFlow=avgFlow+(detectorDataStructureList.get(j).vehicleCount*timeScale)*deltaT/interval;
                         // Weighted Occupancy
                         avgOccupancy=avgOccupancy+detectorDataStructureList.get(j).vehicleOccupancy*deltaT/interval;
                         // Weighted Speed
@@ -251,6 +272,7 @@ public class detectorDataAggregation {
                     DetectorDataAggregated detectorDataAggregated=new DetectorDataAggregated(organizationId, stationId, detectorId,
                             new Date(timeFrom).toString(), new Date(timeFrom), interval, avgFlow,avgOccupancy,avgSpeed);
                     detectorDataAggregatedList.add(detectorDataAggregated);
+                    deleteData.remove(deleteData.size()-1);// Do not remove the last message
                     detectorDataStructureList.removeAll(deleteData);
                 }
             }

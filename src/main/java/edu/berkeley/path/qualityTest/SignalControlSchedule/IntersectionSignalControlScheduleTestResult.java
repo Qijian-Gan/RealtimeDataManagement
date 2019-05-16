@@ -14,12 +14,8 @@ public class IntersectionSignalControlScheduleTestResult {
     private boolean isRequestControlModeValid;
     private boolean isTimingPatternIdValid; // Organization resource identifier
 
-    // Intersection signal control schedule extension, requested by PATH
-    private boolean isHubOrgIdValid;
-    private boolean isHubSensorIdValid;
-    private boolean isInventoryCheckValid;
-    private boolean isDataValueCheckValid;
-
+   // Signal Schedule Ext
+   // Currently do not include that since it is required by PATH only
     private String errorMessages;
     private boolean validOrNot;
 
@@ -42,22 +38,6 @@ public class IntersectionSignalControlScheduleTestResult {
 
     public boolean isTimingPatternIdValid() {
         return isTimingPatternIdValid;
-    }
-
-    public boolean isHubOrgIdValid() {
-        return isHubOrgIdValid;
-    }
-
-    public boolean isHubSensorIdValid() {
-        return isHubSensorIdValid;
-    }
-
-    public boolean isInventoryCheckValid() {
-        return isInventoryCheckValid;
-    }
-
-    public boolean isDataValueCheckValid() {
-        return isDataValueCheckValid;
     }
 
     public String getErrorMessages() {
@@ -89,22 +69,6 @@ public class IntersectionSignalControlScheduleTestResult {
         isTimingPatternIdValid = timingPatternIdValid;
     }
 
-    public void setHubOrgIdValid(boolean hubOrgIdValid) {
-        isHubOrgIdValid = hubOrgIdValid;
-    }
-
-    public void setHubSensorIdValid(boolean hubSensorIdValid) {
-        isHubSensorIdValid = hubSensorIdValid;
-    }
-
-    public void setInventoryCheckValid(boolean inventoryCheckValid) {
-        isInventoryCheckValid = inventoryCheckValid;
-    }
-
-    public void setDataValueCheckValid(boolean dataValueCheckValid) {
-        isDataValueCheckValid = dataValueCheckValid;
-    }
-
     public void setErrorMessages(String errorMessages) {
         this.errorMessages = errorMessages;
     }
@@ -120,10 +84,6 @@ public class IntersectionSignalControlScheduleTestResult {
         deviceControlScheduleHeaderTestResult=new DeviceControlScheduleHeaderTestResult();
         isRequestControlModeValid=true;
         isTimingPatternIdValid=true;
-        isHubOrgIdValid=true;
-        isHubSensorIdValid=true;
-        isInventoryCheckValid=true;
-        isDataValueCheckValid=true;
         errorMessages="";
         validOrNot=true;
     }
@@ -134,12 +94,11 @@ public class IntersectionSignalControlScheduleTestResult {
         // Device Control Schedule Header
         if(intersectionSignalControlSchedule.getDeviceControlScheduleHeader()==null){
             isDeviceControlScheduleHeaderExist=false;
-            isDeviceControlScheduleHeaderValid=false;
             errorMessages+="Empty device control schedule header;";
         }else{
             deviceControlScheduleHeaderTestResult.Initialization();
             deviceControlScheduleHeaderTestResult.Check(intersectionSignalControlSchedule.getDeviceControlScheduleHeader());
-            if(deviceControlScheduleHeaderTestResult.getErrorMessages()!=""){
+            if(!deviceControlScheduleHeaderTestResult.isValidOrNot()){// Invalid??
                 isDeviceControlScheduleHeaderValid=false;
                 errorMessages+="Device control schedule header contains invalid information;";
             }
@@ -161,11 +120,20 @@ public class IntersectionSignalControlScheduleTestResult {
         // Intersection signal control schedule extension
         // Not implement yet!
 
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
 
-        if(!isDeviceControlScheduleHeaderValid || !isRequestControlModeValid || !isTimingPatternIdValid){
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        if(!isDeviceControlScheduleHeaderExist ||!isDeviceControlScheduleHeaderValid ||
+                !isRequestControlModeValid || !isTimingPatternIdValid){
             validOrNot=false;
         }
 
+        return validOrNot;
     }
 
 }

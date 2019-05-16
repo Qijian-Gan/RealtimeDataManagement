@@ -1,18 +1,16 @@
-package edu.berkeley.path.mainFunctions;
+package edu.berkeley.path.mainFunctions.main;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.berkeley.path.aggregation.detectorDataAggregation;
 import edu.berkeley.path.database.MongoDB.save;
 import edu.berkeley.path.localTest.readFromLocalFiles;
+import edu.berkeley.path.mainFunctions.Other.Application;
 import edu.berkeley.path.settings.Configuration;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.io.IoBuilder;
 import org.bson.Document;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.io.IoBuilder;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -63,7 +61,11 @@ public class Main {
         }
         else if(taskID==3){
             System.out.print("3:  Aggregate data into longer time intervals\n"); // Extract the health results
-            List<Document> detectorDataAggregatedList= detectorDataAggregation.atGivenInterval(Configuration.collectionAggregatedFrom,Configuration.collectionAggregatedTo,Configuration.interval);
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Which organization: Arcadia,LACO,Pasadena");
+            String organization=scanner.next();
+            List<Document> detectorDataAggregatedList= detectorDataAggregation.atGivenInterval(Configuration.collectionAggregatedFrom,
+                    Configuration.collectionAggregatedTo,Configuration.interval,organization);
             save.insertMultipleToMongodbCollection(Configuration.database,Configuration.collectionAggregatedTo,detectorDataAggregatedList);
         }
 

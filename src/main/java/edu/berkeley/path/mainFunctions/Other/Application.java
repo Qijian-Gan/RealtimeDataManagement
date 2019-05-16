@@ -20,7 +20,7 @@
  * UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-package edu.berkeley.path.mainFunctions;
+package edu.berkeley.path.mainFunctions.Other;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;

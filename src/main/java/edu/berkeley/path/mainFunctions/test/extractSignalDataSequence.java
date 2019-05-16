@@ -1,4 +1,4 @@
-package edu.berkeley.path.mainFunctions;
+package edu.berkeley.path.mainFunctions.test;
 
 import com.mongodb.client.MongoCollection;
 import edu.berkeley.path.settings.Configuration;

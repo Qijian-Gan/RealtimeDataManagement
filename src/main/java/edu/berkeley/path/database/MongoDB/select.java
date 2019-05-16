@@ -49,6 +49,51 @@ public class select {
         return iterable;
     }
 
+    public static List<String> getUniqueListOfDeviceIdsForGivenOrgFromDetectorInventory(MongoCollection<Document> collection,String orgId){
+        // This function is used to get a unique list of device Ids for a given organization from Detector Inventory
+
+        // Get all available Device Ids in the collection
+        FindIterable iterable=collection.find(eq("organizationId",orgId)).projection(fields(include("deviceId")));
+
+        Iterator iterator=iterable.iterator();
+        List<String> uniqueDeviceIds=new ArrayList<>();
+        HashSet<String> set=new HashSet<>();
+        while(iterator.hasNext()){
+            Document document=(Document) iterator.next();
+            if(set.add(document.get("deviceId").toString())){
+                uniqueDeviceIds.add(document.get("deviceId").toString());
+            }
+        }
+        Collections.sort(uniqueDeviceIds);// Sort the device Ids
+        return uniqueDeviceIds;
+    }
+
+    public static List<String> getUniqueListOfDeviceIdsForGivenOrgFromDetectorData(MongoCollection<Document> collection,String orgId,String orgName){
+        // This function is used to get a unique list of device Ids for a given organization from Detector Data
+
+        // Get all available Device Ids in the collection
+        int filterThreshold;
+        if(orgName.equals("Arcadia")){
+            orgId="1";
+            filterThreshold=99999;
+        }else{
+            filterThreshold=0;
+        }
+        FindIterable iterable=collection.find(eq("organizationId",orgId)).projection(fields(include("detectorId")));
+
+        Iterator iterator=iterable.iterator();
+        List<String> uniqueDeviceIds=new ArrayList<>();
+        HashSet<String> set=new HashSet<>();
+        while(iterator.hasNext()){
+            Document document=(Document) iterator.next();
+            if(Integer.parseInt(document.get("detectorId").toString())>filterThreshold && set.add(document.get("detectorId").toString())){
+                uniqueDeviceIds.add(document.get("detectorId").toString());
+            }
+        }
+        Collections.sort(uniqueDeviceIds);// Sort the device Ids
+        return uniqueDeviceIds;
+    }
+
 
     // ***************************************************************
     // ***************************************************************

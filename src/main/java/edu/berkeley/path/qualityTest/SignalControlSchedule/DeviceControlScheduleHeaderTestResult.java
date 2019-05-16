@@ -6,6 +6,7 @@ public class DeviceControlScheduleHeaderTestResult {
 
     private boolean isOrganizationInformationExist;
     private boolean isOrganizationIdValid;
+
     private boolean isDeviceIdValid;
     private boolean isTimeBaseScheduleNumberValid;
     private boolean isTimeBaseScheduleMonthValid;
@@ -16,6 +17,7 @@ public class DeviceControlScheduleHeaderTestResult {
     private boolean isDayPlanMinuteValid;
     private boolean isLastUpdateTimeValid;
     private String errorMessages;
+    private boolean validOrNot;
 
     // Get functions
     public boolean isOrganizationInformationExist() {
@@ -64,6 +66,10 @@ public class DeviceControlScheduleHeaderTestResult {
 
     public String getErrorMessages() {
         return errorMessages;
+    }
+
+    public boolean isValidOrNot() {
+        return validOrNot;
     }
 
     // Set functions
@@ -115,6 +121,10 @@ public class DeviceControlScheduleHeaderTestResult {
         this.errorMessages = errorMessages;
     }
 
+    public void setValidOrNot(boolean validOrNot) {
+        this.validOrNot = validOrNot;
+    }
+
     // Initialization
     public void Initialization(){
         isOrganizationInformationExist=true;
@@ -129,6 +139,7 @@ public class DeviceControlScheduleHeaderTestResult {
         isDayPlanMinuteValid=true;
         isLastUpdateTimeValid=true;
         errorMessages="";
+        validOrNot=true;
     }
 
     // Check each element
@@ -137,7 +148,6 @@ public class DeviceControlScheduleHeaderTestResult {
         // Organization Information
         if(deviceControlScheduleHeader.getOrganizationInformation()==null){
             isOrganizationInformationExist=false;
-            isOrganizationIdValid=false;
             errorMessages+="Empty organization information;";
         }else{
             if(deviceControlScheduleHeader.getOrganizationInformation().getOrganizationId()==null){
@@ -216,6 +226,24 @@ public class DeviceControlScheduleHeaderTestResult {
             }
         }
 
+
+        // Assessment
+        validOrNot=assessmentValidOrNot();
+    }
+
+
+    private boolean assessmentValidOrNot(){
+
+        boolean validOrNot=true;
+
+        if(!isOrganizationInformationExist || !isOrganizationIdValid || !isDeviceIdValid
+                || !isTimeBaseScheduleNumberValid || !isTimeBaseScheduleMonthValid || !isTimeBaseScheduleDayValid
+                || !isTimeBaseScheduleDateValid || !isTimeBaseScheduleDayPlanValid || !isDayPlanHourValid
+                || !isDayPlanMinuteValid || !isLastUpdateTimeValid){
+            validOrNot=false;
+        }
+
+        return validOrNot;
     }
 
 }

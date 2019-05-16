@@ -45,10 +45,10 @@ public class Configuration {
     public static String collectionIntersectionSignalInventoryWithTestResult="intersectionSignalInventoryWithTestResult";
 
     // Signal control schedule
-    // Todo: update the message topic
-    public static String intersectionSignalControlSchedule = "Consumer.research.VirtualTopic.CT.D7.210.DSSInterface.IntersectionSignalControlSchedule";
+    public static String intersectionSignalControlSchedule = "VirtualTopic.CT.D7.DSS.Data.IntersectionSignalControlSchedule";
     public static String outputSignalControlLocation="\\data\\signalControl";
     public static String collectionIntersectionSignalControlSchedule="intersectionSignalControlSchedule";
+    public static String collectionIntersectionSignalControlScheduleWithTestResult="intersectionSignalControlScheduleWithTestResult";
 
     // Signal status
     public static String intersectionSignalStatus = "Consumer.research.VirtualTopic.CT.D7.DSS.Data.IntersectionSignalStatus";
@@ -72,7 +72,7 @@ public class Configuration {
     public static int interval=300; // in Seconds
     public static String outputFolder="\\data\\output\\detector\\";
     // ******************Signal Data*******************************
-    public static int intervalSignal=3600; // in Seconds
+    public static int intervalSignal=3600*4; // in Seconds
     public static String outputFolderSignal="\\data\\output\\signal\\";
     public static String collectionCycleInformation="intersectionCycleInformation";
 
