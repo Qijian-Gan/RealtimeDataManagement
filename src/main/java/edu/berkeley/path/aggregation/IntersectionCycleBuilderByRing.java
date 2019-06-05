@@ -18,7 +18,7 @@ import static edu.berkeley.path.database.MongoDB.select.upToDateTPInventoryForGi
 import static edu.berkeley.path.processor.SignalStatus.getPhaseStatusGroupFromSignalStatus;
 import static edu.berkeley.path.processor.SignalStatus.getSignalStatusFromDocument;
 
-public class intersectionCycleBuilderByRing {
+public class IntersectionCycleBuilderByRing {
 
     //********************************************************
     // Definitions of variables

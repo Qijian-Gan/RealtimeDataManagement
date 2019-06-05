@@ -50,7 +50,12 @@ public class readFromLocalFiles {
 
                             ObjectMapper mapper = new ObjectMapper(); // Write to string
                             // Construct a new data type with test results and save it to mongo
-                            DetectorDataWithTestResult detectorDataWithTestResult = new DetectorDataWithTestResult(detectorData, detectorDataTestResult);
+                            // Key: orgId, stationId & receivedTime
+                            long receivedTime=System.currentTimeMillis();
+                            String orgId=detectorData.getOrganizationInformation().getOrganizationId();
+                            int stationId=Integer.parseInt(detectorData.getDetectorDataList().getDetectorDataDetail().get(0).getStationId());
+                            DetectorDataWithTestResult detectorDataWithTestResult=new DetectorDataWithTestResult(orgId,stationId,receivedTime, detectorData
+                                    ,detectorDataTestResult);
                             String detectorDataWithTestResultInString = mapper.writeValueAsString(detectorDataWithTestResult);
                             Document documentWithTestResult = Document.parse(detectorDataWithTestResultInString);
                             save.insertOneToMongodbCollection(Configuration.database, Configuration.collectionDetectorDataWithTestResult, documentWithTestResult);

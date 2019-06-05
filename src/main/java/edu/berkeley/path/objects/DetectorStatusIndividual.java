@@ -90,7 +90,7 @@ public class DetectorStatusIndividual {
         String stationStatus;
         // Just in case the Header Information is Null
         if(detectorStatus.getDetectorStationStatusHeader() ==null){
-            organizationId="Unknown";
+            organizationId=detectorStatus.getDetectorStatusList().getDetector().get(0).getDetectorStatusHeader().getOrganizationInformation().getOrganizationId();
             stationId="Unknown";
             stationStatus="Unknown";
         }else{

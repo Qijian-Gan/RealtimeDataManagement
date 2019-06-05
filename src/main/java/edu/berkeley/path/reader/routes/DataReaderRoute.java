@@ -26,6 +26,7 @@ import org.tmdd._303.messages.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,10 @@ public class DataReaderRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
+        // ************************************************************************************************************
+        // *****************************Arterial*****************************
+        // ************************************************************************************************************
+
         // ******************************************************************
         // Intersection detector data
         // ******************************************************************
@@ -62,7 +67,8 @@ public class DataReaderRoute extends RouteBuilder {
 
                     // Save the file locally
                     Date date = new Date();
-                    String fileName=Constants.Construct_A_File_Name(Configuration.outputDetectorDataLocation,dateFormat.format(date),"Append");
+                    String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                            Configuration.outputDetectorDataLocation,dateFormat.format(date),"Append");
                     producerTemplate.sendBody(fileName, body);
 
                     // Save original document to mongodb
@@ -78,7 +84,12 @@ public class DataReaderRoute extends RouteBuilder {
                     detectorDataTestResult.Check(detectorData);
 
                     // Construct a new data type with test results and save it to mongoDB
-                    DetectorDataWithTestResult detectorDataWithTestResult=new DetectorDataWithTestResult(detectorData,detectorDataTestResult);
+                    // Key: orgId, stationId & receivedTime
+                    long receivedTime=System.currentTimeMillis();
+                    String orgId=detectorData.getOrganizationInformation().getOrganizationId();
+                    int stationId=Integer.parseInt(detectorData.getDetectorDataList().getDetectorDataDetail().get(0).getStationId());
+                    DetectorDataWithTestResult detectorDataWithTestResult=new DetectorDataWithTestResult(orgId,stationId,receivedTime, detectorData
+                            ,detectorDataTestResult);
                     String detectorDataWithTestResultInString =mapper.writeValueAsString(detectorDataWithTestResult);
                     Document documentWithTestResult=Document.parse(detectorDataWithTestResultInString);
                     save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionDetectorDataWithTestResult,
@@ -113,7 +124,8 @@ public class DataReaderRoute extends RouteBuilder {
 
                         // Save the file locally
                         Date date = new Date();
-                        String fileName=Constants.Construct_A_File_Name(Configuration.outputDetectorInventoryLocation,dateFormat.format(date),"Append");
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputDetectorInventoryLocation,dateFormat.format(date),"Append");
                         producerTemplate.sendBody(fileName, body);
 
                         // Save original document to mongodb
@@ -129,8 +141,12 @@ public class DataReaderRoute extends RouteBuilder {
                         detectorInventoryTestResult.Check(detectorInventory);
 
                         // Construct a new data type with test results and save it to MongoDB
+                        // Key: orgId, stationId & receivedTime
+                        long receivedTime=System.currentTimeMillis();
+                        String orgId=detectorInventory.getDetectorStationInventoryHeader().getOrganizationInformation().getOrganizationId();
+                        int stationId=Integer.parseInt(detectorInventory.getDetectorStationInventoryHeader().getDeviceId());
                         DetectorInventoryWithTestResult detectorInventoryWithTestResult=
-                                new DetectorInventoryWithTestResult(detectorInventory,detectorInventoryTestResult);
+                                new DetectorInventoryWithTestResult(orgId,stationId,receivedTime,detectorInventory,detectorInventoryTestResult);
                         String detectorInventoryWithTestResultInString =mapper.writeValueAsString(detectorInventoryWithTestResult);
                         Document documentWithTestResult=Document.parse(detectorInventoryWithTestResultInString);
                         save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionDetectorInventoryWithTestResult
@@ -165,7 +181,8 @@ public class DataReaderRoute extends RouteBuilder {
 
                         // Save the file locally
                         Date date = new Date();
-                        String fileName=Constants.Construct_A_File_Name(Configuration.outputDetectorStatusLocation,dateFormat.format(date),"Append");
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputDetectorStatusLocation,dateFormat.format(date),"Append");
                         producerTemplate.sendBody(fileName, body);
 
                         // Save original document to mongodb
@@ -181,8 +198,19 @@ public class DataReaderRoute extends RouteBuilder {
                         detectorStatusTestResult.Check(detectorStatus);
 
                         // Construct a new data type with test results and save it to mongo
-                        DetectorStatusWithTestResult detectorStatusWithTestResult=
-                                new DetectorStatusWithTestResult(detectorStatus,detectorStatusTestResult);
+                        // Key: orgId, stationId & receivedTime
+                        long receivedTime=System.currentTimeMillis();
+                        String orgId;
+                        int deviceId;
+                        if(detectorStatus.getDetectorStationStatusHeader()==null) {
+                            orgId = detectorStatus.getDetectorStatusList().getDetector().get(0).getDetectorStatusHeader().getOrganizationInformation().getOrganizationId();
+                            deviceId = Integer.parseInt(detectorStatus.getDetectorStatusList().getDetector().get(0).getDetectorStatusHeader().getDeviceId());
+                        }else{
+                            orgId = detectorStatus.getDetectorStationStatusHeader().getOrganizationInformation().getOrganizationId();
+                            deviceId = Integer.parseInt(detectorStatus.getDetectorStationStatusHeader().getDeviceId());
+                        }
+                        DetectorStatusWithTestResult detectorStatusWithTestResult= new DetectorStatusWithTestResult(
+                                orgId,deviceId,receivedTime,detectorStatus,detectorStatusTestResult);
                         String detectorStatusWithTestResultInString =mapper.writeValueAsString(detectorStatusWithTestResult);
                         Document documentWithTestResult=Document.parse(detectorStatusWithTestResultInString);
                         save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionDetectorStatusWithTestResult
@@ -219,7 +247,8 @@ public class DataReaderRoute extends RouteBuilder {
 
                         // Save the original file locally
                         Date date = new Date();
-                        String fileName = Constants.Construct_A_File_Name(Configuration.outputSignalInventoryLocation, dateFormat.format(date), "Append");
+                        String fileName = Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputSignalInventoryLocation, dateFormat.format(date), "Append");
                         producerTemplate.sendBody(fileName, body);
 
                         // Serialize the message
@@ -249,9 +278,14 @@ public class DataReaderRoute extends RouteBuilder {
                         IntersectionSignalInventoryTestResult intersectionSignalInventoryTestResult = new IntersectionSignalInventoryTestResult();
                         intersectionSignalInventoryTestResult.Initialization();
                         intersectionSignalInventoryTestResult.Check(intersectionSignalInventory);
+
                         // Construct a new data type with test results and save it to mongo
-                        IntersectionSignalInventoryWithTestResult intersectionSignalInventoryWithTestResult =
-                                new IntersectionSignalInventoryWithTestResult(intersectionSignalInventory, intersectionSignalInventoryTestResult);
+                        // Key: orgId, stationId & receivedTime
+                        long receivedTime=System.currentTimeMillis();
+                        String orgId=intersectionSignalInventory.getDeviceInventoryHeader().getOrganizationInformation().getOrganizationId();
+                        int stationId=Integer.parseInt(intersectionSignalInventory.getDeviceInventoryHeader().getDeviceId());
+                        IntersectionSignalInventoryWithTestResult intersectionSignalInventoryWithTestResult = new IntersectionSignalInventoryWithTestResult
+                                (orgId,stationId,receivedTime,intersectionSignalInventory, intersectionSignalInventoryTestResult);
                         String signalInventoryWithTestResultInString = mapper.writeValueAsString(intersectionSignalInventoryWithTestResult);
                         Document documentWithTestResult = Document.parse(signalInventoryWithTestResultInString);
                         save.insertOneToMongodbCollection(Configuration.database,
@@ -273,7 +307,8 @@ public class DataReaderRoute extends RouteBuilder {
 
                         // Save the file locally
                         Date date = new Date();
-                        String fileName=Constants.Construct_A_File_Name(Configuration.outputSignalStatusLocation,dateFormat.format(date),"Append");
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputSignalStatusLocation,dateFormat.format(date),"Append");
                         producerTemplate.sendBody(fileName, body);
 
                         // Serialize the message
@@ -298,9 +333,14 @@ public class DataReaderRoute extends RouteBuilder {
                         IntersectionSignalStatusTestResult intersectionSignalStatusTestResult=new IntersectionSignalStatusTestResult();
                         intersectionSignalStatusTestResult.Initialization();
                         intersectionSignalStatusTestResult.Check(intersectionSignalStatus);
+
                         // Construct a new data type with test results and save it to mongo
-                        IntersectionSignalStatusWithTestResult intersectionSignalStatusWithTestResult=
-                                new IntersectionSignalStatusWithTestResult(intersectionSignalStatus,intersectionSignalStatusTestResult);
+                        // Key: orgId, stationId & receivedTime
+                        long receivedTime=System.currentTimeMillis();
+                        String orgId=intersectionSignalStatus.getDeviceStatusHeader().getOrganizationInformation().getOrganizationId();
+                        int stationId=Integer.parseInt(intersectionSignalStatus.getDeviceStatusHeader().getDeviceId());
+                        IntersectionSignalStatusWithTestResult intersectionSignalStatusWithTestResult= new IntersectionSignalStatusWithTestResult(
+                                orgId,stationId,receivedTime,intersectionSignalStatus,intersectionSignalStatusTestResult);
                         String signalStatusWithTestResultInString =mapper.writeValueAsString(intersectionSignalStatusWithTestResult);
                         Document documentWithTestResult=Document.parse(signalStatusWithTestResultInString);
                         save.insertOneToMongodbCollection(Configuration .database,
@@ -321,26 +361,40 @@ public class DataReaderRoute extends RouteBuilder {
 
                         // Save the file locally
                         Date date = new Date();
-                        String fileName=Constants.Construct_A_File_Name(Configuration.outputSignalControlLocation,dateFormat.format(date),"Append");
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputSignalControlLocation,dateFormat.format(date),"Append");
                         producerTemplate.sendBody(fileName, body);
-
-                        // Save original document to mongodb
-                        Document document=Document.parse(body);
-                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionIntersectionSignalControlSchedule,document);
 
                         // Serialize the message
                         IntersectionSignalControlSchedule intersectionSignalControlSchedule = (IntersectionSignalControlSchedule)
                                 JsonUtil.serializer().fromJson(body, new TypeReference<IntersectionSignalControlSchedule>() {}) ;
+
+                        // Save original document to mongodb
+                        Date lastUpdateTime= DateTimeConversion.TMDDDateTimeToRegularDateTime(
+                                intersectionSignalControlSchedule.getDeviceControlScheduleHeader().getLastUpdateTime().getDate(),
+                                intersectionSignalControlSchedule.getDeviceControlScheduleHeader().getLastUpdateTime().getTime());
+                        IntersectionSignalControlScheduleRev intersectionSignalControlScheduleRev=new IntersectionSignalControlScheduleRev(
+                                intersectionSignalControlSchedule.getDeviceControlScheduleHeader().getOrganizationInformation().getOrganizationId(),
+                                Integer.parseInt(intersectionSignalControlSchedule.getDeviceControlScheduleHeader().getDeviceId()),
+                                lastUpdateTime.getTime(),Integer.parseInt(intersectionSignalControlSchedule.getTimingPatternId()),
+                                intersectionSignalControlSchedule);
+                        String signalControlScheduleRevInString =mapper.writeValueAsString(intersectionSignalControlScheduleRev);
+                        Document documentRev=Document.parse(signalControlScheduleRevInString);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionIntersectionSignalControlSchedule,documentRev);
 
                         // Perform the quality test and save the test results to MongoDB
                         IntersectionSignalControlScheduleTestResult intersectionSignalControlScheduleTestResult=
                                 new IntersectionSignalControlScheduleTestResult();
                         intersectionSignalControlScheduleTestResult.Initialization();
                         intersectionSignalControlScheduleTestResult.Check(intersectionSignalControlSchedule);
+
                         // Construct a new data type with test results and save it to mongo
-                        IntersectionSignalControlScheduleWithTestResult intersectionSignalControlScheduleWithTestResult=
-                                new IntersectionSignalControlScheduleWithTestResult(intersectionSignalControlSchedule
-                                        ,intersectionSignalControlScheduleTestResult);
+                        // Key: orgId, stationId & receivedTime
+                        long receivedTime=System.currentTimeMillis();
+                        String orgId=intersectionSignalControlSchedule.getDeviceControlScheduleHeader().getOrganizationInformation().getOrganizationId();
+                        int stationId=Integer.parseInt(intersectionSignalControlSchedule.getDeviceControlScheduleHeader().getDeviceId());
+                        IntersectionSignalControlScheduleWithTestResult intersectionSignalControlScheduleWithTestResult= new IntersectionSignalControlScheduleWithTestResult(
+                                orgId,stationId,receivedTime,intersectionSignalControlSchedule,intersectionSignalControlScheduleTestResult);
                         String intersectionSignalControlScheduleWithTestResultInString =mapper.writeValueAsString
                                 (intersectionSignalControlScheduleWithTestResult);
                         Document documentWithTestResult=Document.parse(intersectionSignalControlScheduleWithTestResultInString);
@@ -362,8 +416,8 @@ public class DataReaderRoute extends RouteBuilder {
 
 
                         Date date = new Date();
-                        String fileName=Constants.Construct_A_File_Name(Configuration.outputSignalTimingPatternInventoryLocation,
-                                dateFormat.format(date),"Append");
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputSignalTimingPatternInventoryLocation, dateFormat.format(date),"Append");
                         producerTemplate.sendBody(fileName, body);
 
                         // Serialize the message
@@ -380,10 +434,14 @@ public class DataReaderRoute extends RouteBuilder {
                                 new IntersectionSignalTimingPatternInventoryTestResult();
                         intersectionSignalTimingPatternInventoryTestResult.Initialization();
                         intersectionSignalTimingPatternInventoryTestResult.Check(intersectionSignalTimingPatternInventory);
+
                         // Construct a new data type with test results and save it to mongo
-                        IntersectionSignalTimingPatternInventoryWithTestResult intersectionSignalTimingPatternInventoryWithTestResult=
-                                new IntersectionSignalTimingPatternInventoryWithTestResult(intersectionSignalTimingPatternInventory
-                                        ,intersectionSignalTimingPatternInventoryTestResult);
+                        // Key: orgId, stationId & receivedTime
+                        long receivedTime=System.currentTimeMillis();
+                        String orgId=intersectionSignalTimingPatternInventory.getOrganizationInformation().getOrganizationId();
+                        int stationId=Integer.parseInt(intersectionSignalTimingPatternInventory.getDeviceId());
+                        IntersectionSignalTimingPatternInventoryWithTestResult intersectionSignalTimingPatternInventoryWithTestResult= new IntersectionSignalTimingPatternInventoryWithTestResult(
+                                orgId,stationId,receivedTime,intersectionSignalTimingPatternInventory,intersectionSignalTimingPatternInventoryTestResult);
                         String signalTimingPatternInventoryWithTestResultInString =mapper.writeValueAsString
                                 (intersectionSignalTimingPatternInventoryWithTestResult);
                         Document documentWithTestResult=Document.parse(signalTimingPatternInventoryWithTestResultInString);
@@ -391,6 +449,227 @@ public class DataReaderRoute extends RouteBuilder {
                                 Configuration.collectionIntersectionSignalTimingPatternWithTestResult,documentWithTestResult);
                     }
                 });
+
+
+        // ************************************************************************************************************
+        // *****************************Freeway*****************************
+        // ************************************************************************************************************
+
+        // ******************************************************************
+        //  Freeway Detector Data
+        // ******************************************************************
+        fromF(Constants.SEND_ACTIVEMQ_W_QUEUE,Configuration.freewayDetectorData)
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+
+                        logger.info("Reading freeway detector data from data-gateway ...");
+                        String body = (String) exchange.getIn().getBody();
+                        ObjectMapper mapper = new ObjectMapper(); // Write to string
+
+                        // Save the original document locally
+                        Date date = new Date();
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputFreewayDetectorDataLocation,dateFormat.format(date),"Append");
+                        producerTemplate.sendBody(fileName, body);
+
+                        // Save original document to mongodb
+                        Document document=Document.parse(body);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionFreewayDetectorData,document);
+                    }
+                });
+
+
+        // ******************************************************************
+        // Freeway Detector Inventory
+        // ******************************************************************
+        fromF(Constants.SEND_ACTIVEMQ_W_QUEUE,Configuration.freewayDetectorInventory)
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+
+                        logger.info("Reading freeway detector inventory from data-gateway ...");
+                        String body = (String) exchange.getIn().getBody();
+                        ObjectMapper mapper = new ObjectMapper(); // Write to string
+
+                        // Save the original document locally
+                        Date date = new Date();
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputFreewayDetectorInventoryLocation,dateFormat.format(date),"Append");
+                        producerTemplate.sendBody(fileName, body);
+
+                        // Save original document to mongodb
+                        Document document=Document.parse(body);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionFreewayDetectorInventory,document);
+                    }
+                });
+
+
+        // ******************************************************************
+        // Freeway Detector Status
+        // ******************************************************************
+        fromF(Constants.SEND_ACTIVEMQ_W_QUEUE,Configuration.freewayDetectorStatus)
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+
+                        logger.info("Reading freeway detector status from data-gateway ...");
+                        String body = (String) exchange.getIn().getBody();
+                        ObjectMapper mapper = new ObjectMapper(); // Write to string
+
+                        // Save the original document locally
+                        Date date = new Date();
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputFreewayDetectorStatusLocation,dateFormat.format(date),"Append");
+                        producerTemplate.sendBody(fileName, body);
+
+                        // Save original document to mongodb
+                        Document document=Document.parse(body);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionFreewayDetectorStatus,document);
+                    }
+                });
+
+
+        // ******************************************************************
+        // Ramp Detector Data
+        // ******************************************************************
+        fromF(Constants.SEND_ACTIVEMQ_W_QUEUE,Configuration.rampDetectorData)
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+
+                        logger.info("Reading ramp detector data from data-gateway ...");
+                        String body = (String) exchange.getIn().getBody();
+                        ObjectMapper mapper = new ObjectMapper(); // Write to string
+
+                        // Save the original document locally
+                        Date date = new Date();
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputRampDetectorDataLocation,dateFormat.format(date),"Append");
+                        producerTemplate.sendBody(fileName, body);
+
+                        // Save original document to mongodb
+                        Document document=Document.parse(body);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionRampDetectorData,document);
+                    }
+                });
+
+
+        // ******************************************************************
+        // Ramp Detector Inventory
+        // ******************************************************************
+        fromF(Constants.SEND_ACTIVEMQ_W_QUEUE,Configuration.rampDetectorInventory)
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+
+                        logger.info("Reading ramp detector inventory from data-gateway ...");
+                        String body = (String) exchange.getIn().getBody();
+                        ObjectMapper mapper = new ObjectMapper(); // Write to string
+
+                        // Save the original document locally
+                        Date date = new Date();
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputRampDetectorInventoryLocation,dateFormat.format(date),"Append");
+                        producerTemplate.sendBody(fileName, body);
+
+                        // Save original document to mongodb
+                        Document document=Document.parse(body);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionRampDetectorInventory,document);
+                    }
+                });
+
+
+        // ******************************************************************
+        // Ramp Detector Status
+        // ******************************************************************
+        fromF(Constants.SEND_ACTIVEMQ_W_QUEUE,Configuration.rampDetectorStatus)
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+
+                        logger.info("Reading ramp detector status from data-gateway ...");
+                        String body = (String) exchange.getIn().getBody();
+                        ObjectMapper mapper = new ObjectMapper(); // Write to string
+
+                        // Save the original document locally
+                        Date date = new Date();
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputRampDetectorStatusLocation,dateFormat.format(date),"Append");
+                        producerTemplate.sendBody(fileName, body);
+
+                        // Save original document to mongodb
+                        Document document=Document.parse(body);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionRampDetectorStatus,document);
+                    }
+                });
+
+
+        // ******************************************************************
+        // Ramp Meter Inventory
+        // ******************************************************************
+        fromF(Constants.SEND_ACTIVEMQ_W_QUEUE,Configuration.rampMeterInventory)
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+
+                        logger.info("Reading ramp meter inventory from data-gateway ...");
+                        String body = (String) exchange.getIn().getBody();
+                        ObjectMapper mapper = new ObjectMapper(); // Write to string
+
+                        // Save the original document locally
+                        Date date = new Date();
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputRampMeterInventoryLocation,dateFormat.format(date),"Append");
+                        producerTemplate.sendBody(fileName, body);
+
+                        // Save original document to mongodb
+                        Document document=Document.parse(body);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionRampMeterInventory,document);
+                    }
+                });
+
+
+        // ******************************************************************
+        // Ramp Meter Status
+        // ******************************************************************
+        fromF(Constants.SEND_ACTIVEMQ_W_QUEUE,Configuration.rampMeterStatus)
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+
+                        logger.info("Reading ramp meter status from data-gateway ...");
+                        String body = (String) exchange.getIn().getBody();
+                        ObjectMapper mapper = new ObjectMapper(); // Write to string
+
+                        // Save the original document locally
+                        Date date = new Date();
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputRampMeterStatusLocation,dateFormat.format(date),"Append");
+                        producerTemplate.sendBody(fileName, body);
+
+                        // Save original document to mongodb
+                        Document document=Document.parse(body);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionRampMeterStatus,document);
+                    }
+                });
+
+
+        // ******************************************************************
+        // Ramp Meter Plan Inventory
+        // ******************************************************************
+        fromF(Constants.SEND_ACTIVEMQ_W_QUEUE,Configuration.rampMeterPlanInventory)
+                .process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+
+                        logger.info("Reading ramp meter plan inventory from data-gateway ...");
+                        String body = (String) exchange.getIn().getBody();
+                        ObjectMapper mapper = new ObjectMapper(); // Write to string
+
+                        // Save the original document locally
+                        Date date = new Date();
+                        String fileName=Constants.Construct_A_File_Name_FullPath(Configuration.saveRawDataTo,
+                                Configuration.outputRampMeterPlanInventoryLocation,dateFormat.format(date),"Append");
+                        producerTemplate.sendBody(fileName, body);
+
+                        // Save original document to mongodb
+                        Document document=Document.parse(body);
+                        save.insertOneToMongodbCollection(Configuration.database,Configuration.collectionRampMeterPlanInventory,document);
+                    }
+                });
+
 
 
     }

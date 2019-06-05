@@ -1,7 +1,7 @@
 package edu.berkeley.path.mainFunctions.main;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.berkeley.path.aggregation.detectorDataAggregation;
+import edu.berkeley.path.aggregation.DetectorDataAggregation;
 import edu.berkeley.path.database.MongoDB.save;
 import edu.berkeley.path.localTest.readFromLocalFiles;
 import edu.berkeley.path.mainFunctions.Other.Application;
@@ -18,13 +18,16 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Scanner;
 
+import static edu.berkeley.path.aggregation.DetectorDataAggregation.aggregateDataForOrganizations;
+import static edu.berkeley.path.detectorHealth.UpdateDetectorHealthAndData.updateForAllOrganizations;
+
 public class Main {
 
     private static final Logger LOG = LogManager.getLogger(Application.class);
 
     public static AbstractApplicationContext springCtx;
 
-    public static void main(String[] args) throws ParseException, JsonProcessingException {
+    public static void main(String[] args) throws JsonProcessingException {
 
         // Get the task ID
         int taskID=0;
@@ -35,6 +38,7 @@ public class Main {
             System.out.print("1:  Get data from the data hub via D7 \n");
             System.out.print("2:  Read data from local folders and insert to MongoDB \n");
             System.out.print("3:  Aggregate data into longer time intervals\n");
+            System.out.print("4:  Daily detector health analysis");
             System.out.print("Please enter your selection (number):");
             taskID = Integer.parseInt(scanner.next());
         }else{
@@ -53,7 +57,6 @@ public class Main {
             } catch (Throwable e) {
                 LOG.error("Exception caught in Main method " + e.getMessage());
             }
-
         }
         else if(taskID==2){
             System.out.print("2:  Read data from local folders and insert to MongoDB \n"); // Load configuration files
@@ -62,11 +65,11 @@ public class Main {
         else if(taskID==3){
             System.out.print("3:  Aggregate data into longer time intervals\n"); // Extract the health results
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Which organization: Arcadia,LACO,Pasadena");
-            String organization=scanner.next();
-            List<Document> detectorDataAggregatedList= detectorDataAggregation.atGivenInterval(Configuration.collectionAggregatedFrom,
-                    Configuration.collectionAggregatedTo,Configuration.interval,organization);
-            save.insertMultipleToMongodbCollection(Configuration.database,Configuration.collectionAggregatedTo,detectorDataAggregatedList);
+            aggregateDataForOrganizations();
+        }
+        else if(taskID==4){
+            System.out.print("4:  Daily detector health analysis");
+            updateForAllOrganizations();
         }
 
     }

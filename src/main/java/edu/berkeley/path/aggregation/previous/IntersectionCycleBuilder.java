@@ -1,4 +1,4 @@
-package edu.berkeley.path.aggregation;
+package edu.berkeley.path.aggregation.previous;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,24 +7,19 @@ import com.mongodb.client.MongoCollection;
 import edu.berkeley.path.objects.IntersectionPhaseStatus;
 import edu.berkeley.path.objects.IntersectionPhaseStatusGroup;
 import edu.berkeley.path.objects.IntersectionSignalCycleStatus;
-import edu.berkeley.path.settings.Configuration;
-import org.apache.tools.ant.taskdefs.condition.And;
 import org.bson.Document;
 import org.tmdd._303.messages.IntersectionSignalSequenceData;
 import org.tmdd._303.messages.IntersectionSignalStatus;
-import org.tmdd._303.messages.IntersectionSignalTPInventoryPhase;
 
 import java.util.*;
 
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Projections.*;
-import static edu.berkeley.path.database.MongoDB.connect.getCollectionMongoDBStandalone;
-import static edu.berkeley.path.database.MongoDB.save.insertMultipleToMongodbCollection;
 import static edu.berkeley.path.database.MongoDB.select.*;
 import static edu.berkeley.path.processor.SignalStatus.getPhaseStatusGroupFromSignalStatus;
 import static edu.berkeley.path.processor.SignalStatus.getSignalStatusFromDocument;
 
-public class intersectionCycleBuilder {
+public class IntersectionCycleBuilder {
     // This function is used to build a whole cycle from the Signal Inventory and Status data
 
     //********************************************************

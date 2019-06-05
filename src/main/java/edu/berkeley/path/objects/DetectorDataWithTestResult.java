@@ -5,10 +5,16 @@ import org.tmdd._303.messages.DetectorData;
 
 public class DetectorDataWithTestResult {
 
+    private String organizationId;
+    private int stationId;
+    private long receivedTime;
     private DetectorData message;
     private DetectorDataTestResult testResult;
 
-    public DetectorDataWithTestResult(DetectorData _message, DetectorDataTestResult _testResult){
+    public DetectorDataWithTestResult(String _organizationId,int _stationId,long _receivedTime,DetectorData _message, DetectorDataTestResult _testResult){
+        this.organizationId=_organizationId;
+        this.stationId=_stationId;
+        this.receivedTime=_receivedTime;
         this.message=_message;
         this.testResult=_testResult;
     }
@@ -22,6 +28,18 @@ public class DetectorDataWithTestResult {
         return testResult;
     }
 
+    public int getStationId() {
+        return stationId;
+    }
+
+    public long getReceivedTime() {
+        return receivedTime;
+    }
+
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
     // Set functions
     public void setMessage(DetectorData message) {
         this.message = message;
@@ -29,5 +47,17 @@ public class DetectorDataWithTestResult {
 
     public void setTestResult(DetectorDataTestResult testResult) {
         this.testResult = testResult;
+    }
+
+    public void setStationId(int stationId) {
+        this.stationId = stationId;
+    }
+
+    public void setReceivedTime(long receivedTime) {
+        this.receivedTime = receivedTime;
+    }
+
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
     }
 }

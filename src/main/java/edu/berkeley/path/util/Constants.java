@@ -1,5 +1,7 @@
 package edu.berkeley.path.util;
 
+import edu.berkeley.path.settings.Configuration;
+
 import java.io.File;
 
 public class Constants {
@@ -14,4 +16,11 @@ public class Constants {
         return fileName;
     }
 
+    public static String Construct_A_File_Name_FullPath(String fullPath, String subFolder,String name, String option){
+
+        String folder ="file://"+fullPath+subFolder;
+
+        String fileName=folder+"?fileName="+name+".json&fileExist="+option;
+        return fileName;
+    }
 }

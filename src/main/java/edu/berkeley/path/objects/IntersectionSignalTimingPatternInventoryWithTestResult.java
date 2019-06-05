@@ -5,11 +5,17 @@ import org.tmdd._303.messages.IntersectionSignalTimingPatternInventory;
 
 public class IntersectionSignalTimingPatternInventoryWithTestResult {
 
+    private String organizationId;
+    private int stationId;
+    private long receivedTime;
     private IntersectionSignalTimingPatternInventory message;
     private IntersectionSignalTimingPatternInventoryTestResult testResult;
 
-    public IntersectionSignalTimingPatternInventoryWithTestResult(IntersectionSignalTimingPatternInventory _message,
+    public IntersectionSignalTimingPatternInventoryWithTestResult(String _organizationId,int _stationId,long _receivedTime, IntersectionSignalTimingPatternInventory _message,
                                                                   IntersectionSignalTimingPatternInventoryTestResult _testResult){
+        this.organizationId=_organizationId;
+        this.stationId=_stationId;
+        this.receivedTime=_receivedTime;
         this.message=_message;
         this.testResult=_testResult;
     }
@@ -23,6 +29,18 @@ public class IntersectionSignalTimingPatternInventoryWithTestResult {
         return testResult;
     }
 
+    public long getReceivedTime() {
+        return receivedTime;
+    }
+
+    public int getStationId() {
+        return stationId;
+    }
+
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
     // Set functions
     public void setMessage(IntersectionSignalTimingPatternInventory message) {
         this.message = message;
@@ -30,5 +48,17 @@ public class IntersectionSignalTimingPatternInventoryWithTestResult {
 
     public void setTestResult(IntersectionSignalTimingPatternInventoryTestResult testResult) {
         this.testResult = testResult;
+    }
+
+    public void setReceivedTime(long receivedTime) {
+        this.receivedTime = receivedTime;
+    }
+
+    public void setStationId(int stationId) {
+        this.stationId = stationId;
+    }
+
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
     }
 }

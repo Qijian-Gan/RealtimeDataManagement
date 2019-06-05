@@ -429,6 +429,8 @@ public class DetectorDataDetailTestResult {
             validOrNot=false;
         }
 
+        // Currently do not check speed, queue length, and vehicle stops
+        /*
         // Vehicle Speed
         if(!isVehicleSpeedValid){
             validOrNot=false;
@@ -443,6 +445,7 @@ public class DetectorDataDetailTestResult {
         if(!isVehicleStopsValid){
             validOrNot=false;
         }
+        */
 
         // Detector Status
         if(!isDetectorStatusValid){

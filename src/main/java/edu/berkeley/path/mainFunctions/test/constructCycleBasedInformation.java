@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
-import static edu.berkeley.path.aggregation.intersectionCycleBuilderByRing.buildAndSaveCycleInformation;
-import static edu.berkeley.path.aggregation.intersectionCycleBuilder.getCycleBuildingPeriodForAllIntersections;
+import static edu.berkeley.path.aggregation.IntersectionCycleBuilderByRing.buildAndSaveCycleInformation;
+import static edu.berkeley.path.aggregation.previous.IntersectionCycleBuilder.getCycleBuildingPeriodForAllIntersections;
 import static edu.berkeley.path.database.MongoDB.connect.getCollectionMongoDBStandalone;
 
 public class constructCycleBasedInformation {

@@ -1,4 +1,4 @@
-package edu.berkeley.path.aggregation;
+package edu.berkeley.path.aggregation.previous;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,7 @@ import static edu.berkeley.path.database.MongoDB.select.upToDateTPInventoryForGi
 import static edu.berkeley.path.processor.SignalStatus.getPhaseStatusGroupFromSignalStatus;
 import static edu.berkeley.path.processor.SignalStatus.getSignalStatusFromDocument;
 
-public class intersectionCycleBuilderRevised {
+public class IntersectionCycleBuilderRevised {
 
     //********************************************************
     // Definitions of variables

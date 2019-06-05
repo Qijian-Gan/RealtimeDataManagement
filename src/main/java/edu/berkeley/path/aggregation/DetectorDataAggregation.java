@@ -7,6 +7,7 @@ import com.mongodb.Block;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import edu.berkeley.path.database.MongoDB.save;
 import edu.berkeley.path.objects.DetectorDataAggregated;
 import edu.berkeley.path.settings.Configuration;
 import edu.berkeley.path.database.MongoDB.connect;
@@ -14,7 +15,7 @@ import org.bson.Document;
 import java.util.*;
 import static com.mongodb.client.model.Filters.*;
 
-public class detectorDataAggregation {
+public class DetectorDataAggregation {
 
     // Raw data structure
     public static class DetectorDataStructure{
@@ -36,7 +37,20 @@ public class detectorDataAggregation {
         }
     }
 
-    public static List<Document> atGivenInterval(String collectionFrom,String collectionTo,final int interval, String organization) throws JsonProcessingException {
+    public static void aggregateDataForOrganizations() throws JsonProcessingException {
+        // Aggregate detector data for preselected organizations
+
+        String[] listOfOrganizations=Configuration.organizations.split(";");
+        for(int i=0;i<listOfOrganizations.length;i++) {
+            String organization=listOfOrganizations[i];
+            System.out.println("Aggregating data for organization: "+organization);
+            List<Document> detectorDataAggregatedList = DetectorDataAggregation.atGivenIntervalForEachOrganization(Configuration.collectionAggregatedFrom,
+                    Configuration.collectionAggregatedTo, Configuration.interval, Configuration.delay, organization);
+            save.insertMultipleToMongodbCollection(Configuration.database, Configuration.collectionAggregatedTo, detectorDataAggregatedList);
+        }
+    }
+
+    public static List<Document> atGivenIntervalForEachOrganization(String collectionFrom,String collectionTo, int interval, int delay, String organization) throws JsonProcessingException {
         // This function is used to aggregate raw traffic data in "collectionFrom" at the "interval" level
 
         List<DetectorDataAggregated> detectorDataAggregatedList=new ArrayList<>();
@@ -49,6 +63,7 @@ public class detectorDataAggregation {
         AggregateIterable<Document> documentAggregateIterable=getDetectorDataIndexFromGivenCollection(collFrom);
 
         // Check organization
+        // TODO: Need to add pasadena in the future. Currently do not know the organization id for pasadena
         String orgId="";
         int detIdThreshold=0;
         if(organization.equals("Arcadia")){
@@ -70,7 +85,7 @@ public class detectorDataAggregation {
                 // Get the start time: depends on "collFrom" and "collTo"
                 Date startTime = getStartTimeForEachKeyForAggregation(key, collFrom, collTo, interval);
                 // Get the end time: depends on "collFrom" and the current time
-                Date endTime = getEndTimeForEachKeyForAggregation(key, collFrom, interval);
+                Date endTime = getEndTimeForEachKeyForAggregationWithDelay(key, collFrom, interval,delay);
                 // Select the raw data for each key in the given time period
                 List<DetectorDataStructure> detectorDataStructureList = selectDataForGivenTimePeriodForEachKey(key, collFrom, startTime, endTime);
                 // Aggregation
@@ -110,6 +125,7 @@ public class detectorDataAggregation {
             ,MongoCollection<Document> collTo, int interval){
         // Get the start time for each key for aggregation
 
+        // max[earliest time in collFrom, latest time in collTo]
         Date startTime=null;
         Date dateCollFrom=getEarliestTimeStampForEachKeyFromACollection(collFrom,key);
         Date dateCollTo=getLatestTimeStampForEachKeyFromACollection(collTo,key); // Need to add the interval
@@ -178,6 +194,24 @@ public class detectorDataAggregation {
         // Print and return
         //System.out.println(calendar.getTime());
         return calendar.getTime();
+    }
+
+    public static Date getEndTimeForEachKeyForAggregationWithDelay(Document key,MongoCollection<Document> collFrom,int interval, int delay){
+        // Get the end time for each key for aggregation with a delay (of number of intervals)
+
+        Date endTime=null;
+        Date dateCollFrom=getLatestTimeStampForEachKeyFromACollection(collFrom,key); // Latest update in the raw collection
+        Date dateCollCurrent=Calendar.getInstance().getTime(); // Current time
+        if(dateCollFrom!=null){
+            endTime=getTruncatedTimeByDefaultInterval(dateCollFrom,interval);
+            if(dateCollCurrent!=null){
+                Date tmpTime=getTruncatedTimeByDefaultInterval(dateCollCurrent,interval);
+                if(tmpTime.getTime()-delay*interval*1000<endTime.getTime()){
+                    endTime=new Date(tmpTime.getTime()-delay*interval*1000);
+                }
+            }
+        }
+        return endTime;
     }
 
     public static Date getEndTimeForEachKeyForAggregation(Document key,MongoCollection<Document> collFrom,int interval){
